@@ -1,0 +1,31 @@
+---
+interface Props {
+  title: string;
+  href: string;
+  description?: string;
+  tags?: string[];
+  image?: string;
+  date?: string;
+}
+const { title, href, description, tags, image, date } = Astro.props;
+---
+
+<a href={href} class="group block bg-surface border border-border rounded-xl overflow-hidden hover:border-accent transition-colors no-underline">
+  {image && (
+    <div class="aspect-video overflow-hidden">
+      <img src={image} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+    </div>
+  )}
+  <div class="p-5">
+    {tags && tags.length > 0 && (
+      <div class="flex flex-wrap gap-1 mb-3">
+        {tags.map(tag => (
+          <span class="text-xs bg-surface2 border border-border text-muted px-2 py-0.5 rounded-full">{tag}</span>
+        ))}
+      </div>
+    )}
+    <h3 class="font-medium text-base group-hover:text-accent-light transition-colors mb-2">{title}</h3>
+    {description && <p class="text-sm text-muted line-clamp-2">{description}</p>}
+    {date && <p class="text-xs text-muted mt-3">{new Date(date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
+  </div>
+</a>

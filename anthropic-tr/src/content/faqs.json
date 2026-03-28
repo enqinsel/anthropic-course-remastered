@@ -1,0 +1,107 @@
+[
+  {
+    "id": "g1",
+    "question": "Claude nedir?",
+    "answer": "Claude, Anthropic tarafından geliştirilen bir yapay zeka asistanıdır. Doğal dil anlama, kod yazma, analiz yapma ve yaratıcı içerik üretme konularında güçlü yeteneklere sahiptir.",
+    "category": "genel",
+    "order_index": 1
+  },
+  {
+    "id": "g2",
+    "question": "Anthropic nedir?",
+    "answer": "Anthropic, yapay zeka güvenliği odaklı bir araştırma şirketidir. Claude'u geliştiren ve yapay zekanın güvenli, faydalı ve dürüst olması için çalışan bir şirkettir.",
+    "category": "genel",
+    "order_index": 2
+  },
+  {
+    "id": "g3",
+    "question": "Claude ücretsiz mi kullanılabilir?",
+    "answer": "Claude.ai üzerinden sınırlı ücretsiz kullanım mevcut. Claude Pro aboneliği ile daha fazla mesaj ve gelişmiş modellere erişim sağlanabilir. API kullanımı token başına ücretlendirilir.",
+    "category": "genel",
+    "order_index": 3
+  },
+  {
+    "id": "g4",
+    "question": "Claude ile GPT-4 arasındaki fark nedir?",
+    "answer": "Claude, Anthropic'in Constitutional AI yöntemiyle eğitilmiştir ve güvenlik odaklıdır. Uzun bağlam penceresi, kod analizi ve nüanslı talimatları takip etme konularında güçlüdür.",
+    "category": "genel",
+    "order_index": 4
+  },
+  {
+    "id": "g5",
+    "question": "Bu sitedeki içerikler nereden geliyor?",
+    "answer": "Tüm kurs içerikleri Anthropic'in resmi GitHub reposundan (github.com/anthropics/courses) alınmış ve Türkçe'ye çevrilmiştir. Site Anthropic ile resmi bir bağlantıya sahip değildir.",
+    "category": "genel",
+    "order_index": 5
+  },
+  {
+    "id": "a1",
+    "question": "Claude API anahtarı nasıl alınır?",
+    "answer": "console.anthropic.com adresine gidin, hesap oluşturun veya giriş yapın, API Keys bölümünden yeni bir anahtar oluşturun. Anahtarı güvenli bir yerde saklayın — bir kez gösterilir.",
+    "category": "api",
+    "order_index": 6
+  },
+  {
+    "id": "a2",
+    "question": "Claude API fiyatlandırması nasıl?",
+    "answer": "Fiyatlandırma modele göre değişir. Claude 3 Haiku en ucuz, Sonnet orta, Opus en pahalı modeldir. Giriş ve çıkış tokenleri ayrı ayrı ücretlendirilir. Güncel fiyatlar için anthropic.com/pricing sayfasını ziyaret edin.",
+    "category": "api",
+    "order_index": 7
+  },
+  {
+    "id": "a3",
+    "question": "Context window ne kadar büyük?",
+    "answer": "Claude 3 modelleri 200.000 token context window'a sahiptir — yaklaşık 150.000 İngilizce kelime veya 500 sayfalık bir belge.",
+    "category": "api",
+    "order_index": 8
+  },
+  {
+    "id": "a4",
+    "question": "Hangi programlama dillerini destekliyor?",
+    "answer": "Anthropic'in resmi SDK'ları Python ve TypeScript/JavaScript için mevcuttur. HTTP API doğrudan tüm dillerden çağrılabilir.",
+    "category": "api",
+    "order_index": 9
+  },
+  {
+    "id": "p1",
+    "question": "İyi bir prompt nasıl yazılır?",
+    "answer": "İyi bir prompt: açık ve spesifik olmalı, bağlam sağlamalı, istenilen çıktı formatını belirtmeli, gerekirse örnekler içermeli ve Claude'a düşünme fırsatı tanımalıdır.",
+    "category": "prompt",
+    "order_index": 10
+  },
+  {
+    "id": "p2",
+    "question": "System prompt ne işe yarar?",
+    "answer": "System prompt, Claude'a konuşma boyunca geçerli olacak bağlam, kişilik ve kurallar tanımlar. Kullanıcı mesajlarından önce gelir ve asistan davranışını şekillendirir.",
+    "category": "prompt",
+    "order_index": 11
+  },
+  {
+    "id": "p3",
+    "question": "Few-shot prompting nedir?",
+    "answer": "Few-shot prompting, Claude'a beklenen formatı birkaç örnek göstererek öğretme tekniğidir. 'Bunu X formatında yap' demek yerine X formatında 2-3 örnek vermek çok daha etkilidir.",
+    "category": "prompt",
+    "order_index": 12
+  },
+  {
+    "id": "p4",
+    "question": "Temperature ne demek?",
+    "answer": "Temperature, Claude'un yanıtlarındaki yaratıcılık seviyesini kontrol eder. 0.0 deterministik ve tutarlı (sınıflandırma için ideal), 1.0 ise yaratıcı ve çeşitlidir (beyin fırtınası için ideal).",
+    "category": "prompt",
+    "order_index": 13
+  },
+  {
+    "id": "t1",
+    "question": "Tool use (araç kullanımı) nedir?",
+    "answer": "Tool use, Claude'un harici fonksiyonlar ve API'lere erişmesini sağlayan bir özelliktir. Siz araçları tanımlarsınız, Claude gerektiğinde bunları çağırır.",
+    "category": "arac",
+    "order_index": 14
+  },
+  {
+    "id": "t2",
+    "question": "Ne zaman tool use kullanmalıyım?",
+    "answer": "Claude'un kendi bilgisinin yetmeyeceği durumlarda: gerçek zamanlı veri (hava, borsa), veritabanı sorguları, harici API çağrıları veya hesaplamalar için idealdir.",
+    "category": "arac",
+    "order_index": 15
+  }
+]

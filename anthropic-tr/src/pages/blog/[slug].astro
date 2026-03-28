@@ -1,0 +1,227 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../components/layout/BaseLayout.astro';
+import AdBanner from '../../components/ads/AdBanner.astro';
+import { supabase } from '../../lib/supabase';
+import type { ContentBlock } from '../../lib/types';
+
+const { slug } = Astro.params;
+
+const { data: post } = await supabase
+  .from('posts')
+  .select('*')
+  .eq('slug', slug)
+  .eq('status', 'published')
+  .single();
+
+if (!post) return Astro.redirect('/404');
+
+const blocks = post.content as ContentBlock[];
+
+// Okuma süresi
+const wordCount = blocks
+  .filter(b => b.type === 'paragraph' || b.type === 'heading')
+  .reduce((sum, b) => sum + (b.text ?? '').split(' ').length, 0);
+const readingTime = Math.max(1, Math.round(wordCount / 200));
+
+// İçindekiler
+const headings = blocks
+  .filter(b => b.type === 'heading')
+  .map(b => ({
+    text: b.text ?? '',
+    level: b.level ?? 2,
+    id: (b.text ?? '').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+  }));
+
+// İlgili yazılar
+const { data: related } = await supabase
+  .from('posts')
+  .select('title, slug, cover_image, tags')
+  .eq('status', 'published')
+  .neq('slug', slug ?? '')
+  .overlaps('tags', post.tags ?? [])
+  .limit(3);
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": post.title,
+  "description": post.seo_description ?? post.excerpt,
+  "image": post.cover_image,
+  "datePublished": post.published_at,
+  "dateModified": post.created_at,
+  "author": { "@type": "Organization", "name": "Anthropic TR" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Anthropic TR",
+    "url": "https://anthropic-tr.com",
+    "logo": { "@type": "ImageObject", "url": "https://anthropic-tr.com/logo.png" },
+  },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": `https://anthropic-tr.com/blog/${post.slug}` },
+};
+
+const postUrl = `https://anthropic-tr.com/blog/${post.slug}`;
+---
+
+<BaseLayout
+  title={post.seo_title ?? post.title}
+  description={post.seo_description ?? post.excerpt ?? ''}
+  image={post.cover_image ?? undefined}
+  type="article"
+  schema={schema}
+>
+  {post.cover_image && (
+    <div class="w-full h-72 md:h-96 overflow-hidden">
+      <img src={post.cover_image} alt={post.title} class="w-full h-full object-cover" fetchpriority="high" />
+    </div>
+  )}
+
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <div class="flex gap-10">
+      <!-- Ana içerik -->
+      <article class="flex-1 min-w-0 max-w-2xl">
+        <!-- Başlık + meta -->
+        <div class="mb-8">
+          {post.tags && post.tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mb-4">
+              {post.tags.map((tag: string) => (
+                <a href={`/blog?tag=${tag}`} class="text-xs bg-surface2 border border-border text-muted px-3 py-1 rounded-full no-underline hover:border-accent">
+                  {tag}
+                </a>
+              ))}
+            </div>
+          )}
+          <h1 class="text-3xl md:text-4xl font-light mb-4">{post.title}</h1>
+          <div class="flex flex-wrap items-center gap-4 text-xs text-muted">
+            <span>Anthropic TR</span>
+            <span>·</span>
+            <time datetime={post.published_at ?? ''}>
+              {new Date(post.published_at ?? post.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </time>
+            <span>·</span>
+            <span>{readingTime} dk okuma</span>
+          </div>
+          <div class="flex gap-3 mt-4">
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(postUrl)}`}
+              target="_blank"
+              rel="noopener"
+              class="text-xs border border-border rounded-lg px-3 py-1.5 text-muted hover:border-accent no-underline transition-colors"
+            >
+              Twitter/X'te Paylaş
+            </a>
+            <button
+              onclick={`navigator.clipboard.writeText('${postUrl}').then(() => alert('Link kopyalandı!'))`}
+              class="text-xs border border-border rounded-lg px-3 py-1.5 text-muted hover:border-accent transition-colors cursor-pointer bg-transparent"
+            >
+              Linki Kopyala
+            </button>
+          </div>
+        </div>
+
+        <!-- İçerik blokları -->
+        <div class="space-y-5">
+          {blocks.map(block => {
+            if (block.type === 'paragraph') return (
+              <p class="leading-[1.8]">{block.text}</p>
+            );
+            if (block.type === 'heading') {
+              const id = (block.text ?? '').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+              return block.level === 2
+                ? <h2 id={id} class="text-xl font-normal mt-8 mb-2 border-l-2 border-accent pl-3">{block.text}</h2>
+                : <h3 id={id} class="font-semibold mt-6 mb-2 text-accent-light">{block.text}</h3>;
+            }
+            if (block.type === 'image') return (
+              <figure class="my-6">
+                <img src={block.url} alt={block.alt ?? ''} class="w-full rounded-xl border border-border" loading="lazy" decoding="async" />
+                {block.caption && <figcaption class="text-xs text-muted text-center mt-2">{block.caption}</figcaption>}
+              </figure>
+            );
+            if (block.type === 'code') return (
+              <pre class="my-4"><code class={`language-${block.language ?? 'text'}`}>{block.code}</code></pre>
+            );
+            if (block.type === 'callout') {
+              const colors: Record<string, string> = {
+                info: 'border-info bg-info/5 text-info',
+                warn: 'border-warn bg-warn/5 text-warn',
+                success: 'border-success bg-success/5 text-success',
+              };
+              return (
+                <div class={`border-l-4 p-4 rounded-r-lg my-4 ${colors[block.variant ?? 'info']}`}>
+                  <p class="text-sm">{block.text}</p>
+                </div>
+              );
+            }
+            if (block.type === 'quote') return (
+              <blockquote class="border-l-4 border-accent pl-5 my-6 italic text-muted">
+                <p>{block.text}</p>
+                {block.source && <cite class="text-xs not-italic mt-2 block">— {block.source}</cite>}
+              </blockquote>
+            );
+            if (block.type === 'video' && block.videoId) return (
+              <div class="my-6 aspect-video rounded-xl overflow-hidden border border-border">
+                <iframe
+                  src={`https://www.youtube.com/embed/${block.videoId}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  class="w-full h-full"
+                  loading="lazy"
+                />
+              </div>
+            );
+            if (block.type === 'divider') return <hr class="border-border my-8" />;
+            return null;
+          })}
+        </div>
+
+        <div class="mt-10">
+          <AdBanner slot="2222222222" format="rectangle" />
+        </div>
+
+        <div class="mt-10 pt-6 border-t border-border text-sm text-muted">
+          <a href="/blog" class="no-underline hover:text-base">← Tüm yazılara dön</a>
+        </div>
+      </article>
+
+      <!-- Sidebar -->
+      <aside class="w-56 flex-shrink-0 hidden xl:block">
+        <div class="sticky top-20 space-y-8">
+          {headings.length > 0 && (
+            <div>
+              <h3 class="text-xs text-muted uppercase tracking-widest mb-3">İçindekiler</h3>
+              <nav class="space-y-1">
+                {headings.map(h => (
+                  <a
+                    href={`#${h.id}`}
+                    class:list={[
+                      'block text-xs no-underline py-1 transition-colors hover:text-accent',
+                      h.level === 2 ? 'text-muted' : 'text-muted pl-3'
+                    ]}
+                  >
+                    {h.text}
+                  </a>
+                ))}
+              </nav>
+            </div>
+          )}
+
+          <AdBanner slot="3333333333" format="rectangle" />
+
+          {related && related.length > 0 && (
+            <div>
+              <h3 class="text-xs text-muted uppercase tracking-widest mb-3">İlgili Yazılar</h3>
+              <div class="space-y-3">
+                {related.map(r => (
+                  <a href={`/blog/${r.slug}`} class="block text-xs text-muted hover:text-base no-underline leading-snug">
+                    {r.title}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

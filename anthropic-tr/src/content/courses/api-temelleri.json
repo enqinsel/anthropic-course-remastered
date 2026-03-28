@@ -1,0 +1,9 @@
+{
+  "course_id": "api-temelleri",
+  "title_tr": "Anthropic API Temelleri",
+  "slug": "api-temelleri",
+  "description_tr": "Claude SDK kurulumu, temel parametreler, multimodal promptlar ve streaming yanıtlar.",
+  "chapters": [],
+  "source_url": "https://github.com/anthropics/courses/tree/master/anthropic_api_fundamentals",
+  "last_synced_at": null
+}

@@ -1,0 +1,9 @@
+{
+  "course_id": "prompt-muhendisligi",
+  "title_tr": "Prompt Mühendisliği",
+  "slug": "prompt-muhendisligi",
+  "description_tr": "9 bölümlü kapsamlı prompt mühendisliği öğreticisi. Rol atama, chain-of-thought, few-shot örnekleri ve daha fazlası.",
+  "chapters": [],
+  "source_url": "https://github.com/anthropics/courses/tree/master/prompt_engineering_interactive_tutorial",
+  "last_synced_at": null
+}

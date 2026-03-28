@@ -1,0 +1,96 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../components/layout/BaseLayout.astro';
+import type { Chapter } from '../../lib/types';
+
+interface CourseJson {
+  course_id: string;
+  title_tr: string;
+  slug: string;
+  description_tr: string | null;
+  chapters: Chapter[];
+  source_url: string | null;
+  last_synced_at: string | null;
+}
+
+// Tanımlı sırayla kursları yükle
+const ORDER = [
+  'api-temelleri',
+  'prompt-muhendisligi',
+  'gercek-dunya-prompting',
+  'prompt-degerlendirme',
+  'arac-kullanimi',
+];
+
+const courseFiles = import.meta.glob<{ default: CourseJson }>('../../content/courses/*.json', { eager: true });
+const allCourses = Object.values(courseFiles).map(m => m.default);
+const courses = ORDER
+  .map(id => allCourses.find(c => c.slug === id))
+  .filter(Boolean) as CourseJson[];
+
+const icons: Record<string, string> = {
+  'api-temelleri': '⚙️',
+  'prompt-muhendisligi': '📖',
+  'gercek-dunya-prompting': '🌍',
+  'prompt-degerlendirme': '📊',
+  'arac-kullanimi': '🔧',
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": "https://anthropic-tr.com" },
+    { "@type": "ListItem", "position": 2, "name": "Kurslar", "item": "https://anthropic-tr.com/kurslar" }
+  ]
+};
+---
+
+<BaseLayout
+  title="Anthropic Claude Kursları Türkçe"
+  description="Claude API ve prompt mühendisliği kursları Türkçe. Ücretsiz, kapsamlı, uygulamalı eğitim materyalleri."
+  schema={schema}
+>
+  <div class="max-w-6xl mx-auto px-4 py-12">
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-muted mb-8">
+      <a href="/" class="hover:text-base no-underline">Ana Sayfa</a>
+      <span class="mx-2">›</span>
+      <span>Kurslar</span>
+    </nav>
+
+    <h1 class="text-3xl font-light mb-3">Kurslar</h1>
+    <p class="text-muted mb-10 max-w-xl">Anthropic'in resmi materyallerinden Türkçe'ye çevrilmiş kapsamlı kurs serisi.</p>
+
+    {courses.length > 0 ? (
+      <div class="grid md:grid-cols-2 gap-6">
+        {courses.map((course, i) => (
+          <a href={`/kurslar/${course.slug}`} class="group bg-surface border border-border hover:border-accent rounded-xl p-6 no-underline transition-colors">
+            <div class="flex items-start gap-4">
+              <div class="text-3xl">{icons[course.slug] ?? '📚'}</div>
+              <div class="flex-1">
+                <div class="text-xs text-muted uppercase tracking-widest mb-1">Kurs {String(i + 1).padStart(2, '0')}</div>
+                <h2 class="font-medium group-hover:text-accent-light transition-colors mb-2">{course.title_tr}</h2>
+                {course.description_tr && (
+                  <p class="text-sm text-muted leading-relaxed">{course.description_tr}</p>
+                )}
+                <div class="mt-4 text-xs text-muted">
+                  {course.chapters.length > 0
+                    ? `${course.chapters.length} bölüm`
+                    : 'İçerik yakında yüklenecek'}
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-16 text-muted">
+        <p>Kurs içerikleri yükleniyor...</p>
+        <p class="text-sm mt-2">İçerik ajanını çalıştırdıktan sonra kurslar burada görünecek.</p>
+        <code class="text-xs block mt-3">python scripts/content_agent.py</code>
+      </div>
+    )}
+  </div>
+</BaseLayout>

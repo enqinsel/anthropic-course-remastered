@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../../components/layout/BaseLayout.astro';
+import Card from '../../components/ui/Card.astro';
+import AdBanner from '../../components/ads/AdBanner.astro';
+import { supabase } from '../../lib/supabase';
+
+const page = parseInt(Astro.url.searchParams.get('page') ?? '1');
+const tag = Astro.url.searchParams.get('tag') ?? '';
+const pageSize = 9;
+const from = (page - 1) * pageSize;
+
+let query = supabase
+  .from('posts')
+  .select('title, slug, excerpt, cover_image, tags, published_at', { count: 'exact' })
+  .eq('status', 'published')
+  .order('published_at', { ascending: false })
+  .range(from, from + pageSize - 1);
+
+if (tag) query = query.contains('tags', [tag]);
+
+const { data: posts, count } = await query;
+const totalPages = Math.ceil((count ?? 0) / pageSize);
+
+// Sidebar için tüm etiketler
+const { data: allPosts } = await supabase
+  .from('posts')
+  .select('tags')
+  .eq('status', 'published');
+
+const allTags = [...new Set((allPosts ?? []).flatMap(p => p.tags ?? []))].sort();
+---
+
+<BaseLayout
+  title="Blog — Claude ve AI Hakkında Türkçe"
+  description="Claude API, prompt mühendisliği ve yapay zeka hakkında Türkçe blog yazıları."
+>
+  <div class="max-w-6xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-light mb-2">Blog</h1>
+    <p class="text-muted mb-10">Claude, yapay zeka ve prompt mühendisliği hakkında Türkçe yazılar.</p>
+
+    <div class="flex gap-8">
+      <!-- Ana içerik -->
+      <div class="flex-1 min-w-0">
+        {posts && posts.length > 0 ? (
+          <div>
+            <div class="grid md:grid-cols-2 gap-5">
+              {posts.map(post => (
+                <Card
+                  title={post.title}
+                  href={`/blog/${post.slug}`}
+                  description={post.excerpt ?? undefined}
+                  tags={post.tags}
+                  image={post.cover_image ?? undefined}
+                  date={post.published_at ?? undefined}
+                />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div class="flex justify-center gap-2 mt-10">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                  <a
+                    href={`/blog?page=${p}${tag ? `&tag=${tag}` : ''}`}
+                    class:list={[
+                      'w-9 h-9 flex items-center justify-center rounded-lg text-sm no-underline border transition-colors',
+                      p === page
+                        ? 'bg-accent border-accent text-white'
+                        : 'border-border text-muted hover:border-accent'
+                    ]}
+                  >
+                    {p}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div class="text-center py-16 text-muted">
+            <p>Henüz yazı yok. Admin panelinden ilk yazını yaz!</p>
+            <a href="/admin/blog-editor" class="text-sm text-accent mt-3 block no-underline hover:underline">→ Yeni yazı yaz</a>
+          </div>
+        )}
+      </div>
+
+      <!-- Sidebar: Etiketler -->
+      {allTags.length > 0 && (
+        <aside class="w-52 flex-shrink-0 hidden lg:block">
+          <div class="sticky top-20">
+            <h3 class="text-xs text-muted uppercase tracking-widest mb-4">Etiketler</h3>
+            <div class="flex flex-wrap gap-2">
+              <a
+                href="/blog"
+                class:list={[
+                  'text-xs px-3 py-1 rounded-full border no-underline transition-colors',
+                  !tag ? 'border-accent text-accent' : 'border-border text-muted hover:border-accent'
+                ]}
+              >
+                Tümü
+              </a>
+              {allTags.map(t => (
+                <a
+                  href={`/blog?tag=${t}`}
+                  class:list={[
+                    'text-xs px-3 py-1 rounded-full border no-underline transition-colors',
+                    tag === t ? 'border-accent text-accent' : 'border-border text-muted hover:border-accent'
+                  ]}
+                >
+                  {t}
+                </a>
+              ))}
+            </div>
+          </div>
+        </aside>
+      )}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,144 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../components/layout/BaseLayout.astro';
+import Card from '../components/ui/Card.astro';
+import AdBanner from '../components/ads/AdBanner.astro';
+import { supabase } from '../lib/supabase';
+import faqsData from '../content/faqs.json';
+
+// Son 3 blog yazısını çek
+const { data: posts } = await supabase
+  .from('posts')
+  .select('title, slug, excerpt, cover_image, tags, published_at')
+  .eq('status', 'published')
+  .order('published_at', { ascending: false })
+  .limit(3);
+
+// SSS önizleme — JSON dosyasından
+const faqs = faqsData.slice(0, 5);
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Anthropic TR",
+  "url": "https://anthropic-tr.com",
+  "description": "Anthropic Claude kursları Türkçe",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://anthropic-tr.com/blog?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+const learningPath = [
+  { num: '01', title: 'API Temelleri', desc: 'Claude SDK kurulumu, temel parametreler, ilk API çağrısı', href: '/kurslar/api-temelleri' },
+  { num: '02', title: 'Prompt Mühendisliği', desc: '9 bölümlü kapsamlı öğretici, uygulamalı alıştırmalar', href: '/kurslar/prompt-muhendisligi' },
+  { num: '03', title: 'Gerçek Dünya Uygulamaları', desc: 'Üretim ortamları için ileri düzey prompting', href: '/kurslar/gercek-dunya-prompting' },
+  { num: '04', title: 'Prompt Değerlendirme', desc: 'Kaliteli çıktı için eval sistemleri kurma', href: '/kurslar/prompt-degerlendirme' },
+  { num: '05', title: 'Araç Kullanımı', desc: 'Function calling ve ajan sistemleri', href: '/kurslar/arac-kullanimi' },
+];
+---
+
+<BaseLayout
+  title="Claude ve Anthropic API'yi Türkçe Öğren"
+  description="Anthropic'in resmi kurs materyalleri Türkçe'ye çevrilmiş ve etkileşimli hale getirilmiştir. Ücretsiz, kapsamlı Claude API eğitimi."
+  schema={schema}
+>
+  <!-- HERO -->
+  <section class="max-w-6xl mx-auto px-4 pt-16 pb-12">
+    <div class="max-w-2xl">
+      <span class="text-xs text-accent uppercase tracking-widest font-medium">Türkçe Claude Eğitimi</span>
+      <h1 class="mt-3 mb-5 text-4xl md:text-5xl font-light leading-tight">
+        Claude ve Anthropic API'yi<br/>
+        <span class="text-accent">Türkçe</span> Öğren
+      </h1>
+      <p class="text-muted text-lg leading-relaxed mb-8">
+        Anthropic'in resmi kurs materyalleri Türkçe'ye çevrilmiş ve etkileşimli hale getirilmiştir.
+        Prompt mühendisliğinden araç kullanımına kadar kapsamlı, ücretsiz eğitim.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href="/kurslar" class="bg-accent hover:bg-accent-light text-white px-5 py-2.5 rounded-lg text-sm font-medium no-underline transition-colors">Kurslara Başla →</a>
+        <a href="/blog" class="bg-surface border border-border hover:border-accent text-base px-5 py-2.5 rounded-lg text-sm no-underline transition-colors">Blog'u Keşfet</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- AdSense: Hero altı -->
+  <div class="max-w-6xl mx-auto px-4 mb-12">
+    <AdBanner slot="1234567890" format="leaderboard" />
+  </div>
+
+  <!-- ÖĞRENME YOLU -->
+  <section class="max-w-6xl mx-auto px-4 py-12 border-t border-border">
+    <h2 class="text-2xl font-light mb-2">Öğrenme Yolu</h2>
+    <p class="text-muted text-sm mb-8">Kursları bu sırayla tamamlamanı öneririz.</p>
+
+    <div class="relative">
+      <div class="absolute left-6 top-0 bottom-0 w-px bg-border" />
+      <div class="space-y-4">
+        {learningPath.map(step => (
+          <a href={step.href} class="relative flex gap-5 group no-underline">
+            <div class="relative z-10 w-12 h-12 bg-surface border border-border group-hover:border-accent rounded-full flex items-center justify-center text-sm text-muted group-hover:text-accent transition-colors flex-shrink-0">
+              {step.num}
+            </div>
+            <div class="pt-2 pb-4">
+              <h3 class="font-medium group-hover:text-accent-light transition-colors">{step.title}</h3>
+              <p class="text-sm text-muted mt-1">{step.desc}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SON BLOG YAZILARI -->
+  {posts && posts.length > 0 && (
+    <section class="max-w-6xl mx-auto px-4 py-12 border-t border-border">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-light">Son Yazılar</h2>
+        <a href="/blog" class="text-sm text-accent no-underline hover:underline">Tümünü gör →</a>
+      </div>
+      <div class="grid md:grid-cols-3 gap-5">
+        {posts.map(post => (
+          <Card
+            title={post.title}
+            href={`/blog/${post.slug}`}
+            description={post.excerpt ?? undefined}
+            tags={post.tags}
+            image={post.cover_image ?? undefined}
+            date={post.published_at ?? undefined}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- AdSense: İçerik ortası -->
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <AdBanner slot="0987654321" format="rectangle" />
+  </div>
+
+  <!-- SSS ÖNİZLEME -->
+  {faqs && faqs.length > 0 && (
+    <section class="max-w-6xl mx-auto px-4 py-12 border-t border-border">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-light">Sık Sorulan Sorular</h2>
+        <a href="/sss" class="text-sm text-accent no-underline hover:underline">Tüm sorular →</a>
+      </div>
+      <div class="max-w-2xl space-y-2">
+        {faqs.map(faq => (
+          <details class="group border border-border rounded-lg overflow-hidden">
+            <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none text-sm font-medium hover:bg-surface2 transition-colors">
+              {faq.question}
+              <span class="text-muted group-open:rotate-180 transition-transform">▾</span>
+            </summary>
+            <div class="px-5 pb-4 text-sm text-muted leading-relaxed border-t border-border pt-3">
+              {faq.answer}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>

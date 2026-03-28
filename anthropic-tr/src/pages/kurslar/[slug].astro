@@ -1,0 +1,247 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../components/layout/BaseLayout.astro';
+import AdBanner from '../../components/ads/AdBanner.astro';
+import type { Chapter } from '../../lib/types';
+
+interface CourseJson {
+  course_id: string;
+  title_tr: string;
+  slug: string;
+  description_tr: string | null;
+  chapters: Chapter[];
+  source_url: string | null;
+  last_synced_at: string | null;
+}
+
+export async function getStaticPaths() {
+  const courseFiles = import.meta.glob<{ default: CourseJson }>('../../content/courses/*.json', { eager: true });
+  const courses = Object.values(courseFiles).map(m => m.default);
+  return courses.map(course => ({
+    params: { slug: course.slug },
+    props: { course },
+  }));
+}
+
+const { course } = Astro.props as { course: CourseJson };
+const chapters: Chapter[] = Array.isArray(course.chapters) ? course.chapters : [];
+
+const activeId = Astro.url.searchParams.get('chapter') ?? chapters[0]?.id;
+const activeChapter = chapters.find(ch => ch.id === activeId) ?? chapters[0];
+const activeIndex = activeChapter ? chapters.indexOf(activeChapter) : -1;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": course.title_tr,
+  "description": course.description_tr ?? course.title_tr,
+  "provider": { "@type": "Organization", "name": "Anthropic TR", "url": "https://anthropic-tr.com" },
+  "inLanguage": "tr",
+  "isAccessibleForFree": true,
+  "educationalLevel": "beginner",
+  "url": `https://anthropic-tr.com/kurslar/${course.slug}`,
+};
+---
+
+<BaseLayout
+  title={course.title_tr}
+  description={course.description_tr ?? `${course.title_tr} — Türkçe kurs materyali`}
+  schema={schema}
+>
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-muted mb-6">
+      <a href="/" class="hover:text-base no-underline">Ana Sayfa</a>
+      <span class="mx-2">›</span>
+      <a href="/kurslar" class="hover:text-base no-underline">Kurslar</a>
+      <span class="mx-2">›</span>
+      <span>{course.title_tr}</span>
+    </nav>
+
+    <div class="flex gap-8">
+      <!-- SOL: Sidebar -->
+      <aside class="w-64 flex-shrink-0 hidden lg:block">
+        <div class="sticky top-20">
+          <h2 class="text-xs text-muted uppercase tracking-widest mb-4">Bölümler</h2>
+
+          {chapters.length > 0 ? (
+            <nav class="space-y-1" id="chapter-nav">
+              {chapters.map(ch => (
+                <a
+                  href={`/kurslar/${course.slug}?chapter=${ch.id}`}
+                  data-chapter-id={ch.id}
+                  class:list={[
+                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors no-underline chapter-link',
+                    ch.id === activeChapter?.id
+                      ? 'bg-surface2 text-accent-light border-l-2 border-accent'
+                      : 'text-muted hover:text-base hover:bg-surface2'
+                  ]}
+                >
+                  <span class="text-xs font-mono text-muted w-6 flex-shrink-0">{ch.num}</span>
+                  <span class="flex-1 leading-snug">{ch.title_tr}</span>
+                  <span class="done-check hidden text-success text-xs">✓</span>
+                </a>
+              ))}
+            </nav>
+          ) : (
+            <p class="text-xs text-muted leading-relaxed">
+              Bölümler henüz yüklenmedi.<br/>
+              <code class="block mt-2">python scripts/content_agent.py</code>
+            </p>
+          )}
+
+          <!-- Reklam -->
+          <div class="mt-6">
+            <AdBanner slot="1111111111" format="rectangle" />
+          </div>
+        </div>
+      </aside>
+
+      <!-- SAĞ: İçerik -->
+      <div class="flex-1 min-w-0">
+        <!-- İlerleme çubuğu -->
+        {chapters.length > 0 && (
+          <div class="mb-6 bg-surface border border-border rounded-lg p-4">
+            <div class="flex justify-between text-xs text-muted mb-2">
+              <span>İlerleme</span>
+              <span id="progress-text">0 / {chapters.length}</span>
+            </div>
+            <div class="h-1 bg-surface2 rounded-full overflow-hidden">
+              <div id="progress-bar" class="h-full bg-accent rounded-full transition-all" style="width:0%" />
+            </div>
+          </div>
+        )}
+
+        {activeChapter ? (
+          <article>
+            <div class="mb-6">
+              <span class="text-xs text-accent uppercase tracking-widest">Bölüm {activeChapter.num}</span>
+              <h1 class="text-2xl font-light mt-2">{activeChapter.title_tr}</h1>
+            </div>
+
+            <!-- İçerik -->
+            <div class="prose-content leading-[1.8] text-base/[1.8]" set:html={activeChapter.content_tr} />
+
+            <!-- Kod örnekleri -->
+            {activeChapter.code_examples && activeChapter.code_examples.length > 0 && (
+              <div class="mt-8">
+                <h3 class="text-sm text-muted uppercase tracking-widest mb-4">Kod Örnekleri</h3>
+                {activeChapter.code_examples.map(code => (
+                  <pre class="mb-4"><code>{code}</code></pre>
+                ))}
+              </div>
+            )}
+
+            <!-- Önceki / Tamamla / Sonraki -->
+            <div class="flex justify-between items-center mt-10 pt-6 border-t border-border">
+              {activeIndex > 0 ? (
+                <a
+                  href={`/kurslar/${course.slug}?chapter=${chapters[activeIndex - 1].id}`}
+                  class="text-sm text-muted hover:text-base no-underline flex items-center gap-2"
+                >
+                  ← {chapters[activeIndex - 1].title_tr}
+                </a>
+              ) : <span />}
+
+              <button
+                id="mark-done"
+                data-chapter-id={activeChapter.id}
+                data-course-id={course.course_id}
+                class="bg-accent hover:bg-accent-light text-white px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                Tamamla ✓
+              </button>
+
+              {activeIndex < chapters.length - 1 ? (
+                <a
+                  href={`/kurslar/${course.slug}?chapter=${chapters[activeIndex + 1].id}`}
+                  class="text-sm text-muted hover:text-base no-underline flex items-center gap-2"
+                >
+                  {chapters[activeIndex + 1].title_tr} →
+                </a>
+              ) : <span />}
+            </div>
+          </article>
+        ) : (
+          <div class="py-16 text-center">
+            <h1 class="text-2xl font-light mb-4">{course.title_tr}</h1>
+            {course.description_tr && (
+              <p class="text-muted mb-6 max-w-md mx-auto">{course.description_tr}</p>
+            )}
+            <div class="bg-surface border border-border rounded-lg p-6 max-w-md mx-auto text-left">
+              <p class="text-sm text-muted mb-3">Bu kursun içeriği henüz yüklenmemiş.</p>
+              <p class="text-sm text-muted">İçerik ajanını çalıştırın:</p>
+              <pre class="mt-2 text-xs"><code>python scripts/content_agent.py</code></pre>
+            </div>
+            {course.source_url && (
+              <a href={course.source_url} target="_blank" rel="noopener" class="text-sm text-accent mt-4 block">
+                GitHub'da kaynak →
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  function getProgress(courseId: string): Set<string> {
+    try {
+      const raw = localStorage.getItem(`progress-${courseId}`);
+      return new Set(raw ? JSON.parse(raw) : []);
+    } catch {
+      return new Set();
+    }
+  }
+
+  function saveProgress(courseId: string, done: Set<string>) {
+    localStorage.setItem(`progress-${courseId}`, JSON.stringify([...done]));
+  }
+
+  function updateUI(courseId: string, totalChapters: number) {
+    const done = getProgress(courseId);
+    const pct = totalChapters ? (done.size / totalChapters) * 100 : 0;
+    const bar = document.getElementById('progress-bar');
+    const txt = document.getElementById('progress-text');
+    if (bar) bar.style.width = pct + '%';
+    if (txt) txt.textContent = `${done.size} / ${totalChapters}`;
+
+    document.querySelectorAll<HTMLElement>('.chapter-link').forEach(link => {
+      const id = link.dataset.chapterId ?? '';
+      const check = link.querySelector<HTMLElement>('.done-check');
+      if (check) check.classList.toggle('hidden', !done.has(id));
+    });
+  }
+
+  const btn = document.getElementById('mark-done') as HTMLButtonElement | null;
+  if (btn) {
+    const chapterId = btn.dataset.chapterId ?? '';
+    const courseId = btn.dataset.courseId ?? '';
+    const totalLinks = document.querySelectorAll('.chapter-link').length;
+
+    updateUI(courseId, totalLinks);
+
+    const done = getProgress(courseId);
+    if (done.has(chapterId)) {
+      btn.textContent = 'Tamamlandı ✓';
+      btn.classList.replace('bg-accent', 'bg-success');
+    }
+
+    btn.addEventListener('click', () => {
+      const current = getProgress(courseId);
+      if (current.has(chapterId)) {
+        current.delete(chapterId);
+        btn.textContent = 'Tamamla ✓';
+        btn.classList.replace('bg-success', 'bg-accent');
+      } else {
+        current.add(chapterId);
+        btn.textContent = 'Tamamlandı ✓';
+        btn.classList.replace('bg-accent', 'bg-success');
+      }
+      saveProgress(courseId, current);
+      updateUI(courseId, totalLinks);
+    });
+  }
+</script>

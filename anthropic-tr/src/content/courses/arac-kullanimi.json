@@ -1,0 +1,9 @@
+{
+  "course_id": "arac-kullanimi",
+  "title_tr": "Araç Kullanımı",
+  "slug": "arac-kullanimi",
+  "description_tr": "Function calling ve ajan sistemleri. Araç tanımlama, çağrı döngüsü yönetimi ve çok adımlı ajan mimarileri.",
+  "chapters": [],
+  "source_url": "https://github.com/anthropics/courses/tree/master/tool_use",
+  "last_synced_at": null
+}

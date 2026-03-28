@@ -1,0 +1,9 @@
+{
+  "course_id": "prompt-degerlendirme",
+  "title_tr": "Prompt Değerlendirme",
+  "slug": "prompt-degerlendirme",
+  "description_tr": "Kaliteli çıktı için eval sistemleri kurma. Otomatik değerlendirme, benchmark oluşturma ve sürekli iyileştirme.",
+  "chapters": [],
+  "source_url": "https://github.com/anthropics/courses/tree/master/prompt_evaluations",
+  "last_synced_at": null
+}

@@ -1,0 +1,9 @@
+{
+  "course_id": "gercek-dunya-prompting",
+  "title_tr": "Gerçek Dünya Uygulamaları",
+  "slug": "gercek-dunya-prompting",
+  "description_tr": "Üretim ortamları için ileri düzey prompting teknikleri. Karmaşık görevler, hata yönetimi ve güvenilir çıktılar.",
+  "chapters": [],
+  "source_url": "https://github.com/anthropics/courses/tree/master/real_world_prompting",
+  "last_synced_at": null
+}

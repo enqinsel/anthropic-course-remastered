@@ -1,0 +1,27 @@
+# Node
+node_modules/
+
+# Build
+dist/
+.astro/
+.output/
+.netlify/
+.vercel/
+
+# Environment (hiçbir zaman commit edilmemeli)
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+scripts/_repo_cache/
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+*.log

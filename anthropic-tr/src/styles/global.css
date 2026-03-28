@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  /* Renkler */
+  --color-site: #0f0f13;
+  --color-surface: #18181f;
+  --color-surface2: #22222c;
+  --color-border: #2e2e3a;
+  --color-accent: #c96442;
+  --color-accent-light: #e88060;
+  --color-base: #e8e6df;
+  --color-muted: #888880;
+  --color-success: #4a9f6f;
+  --color-info: #4a7fbf;
+  --color-warn: #bf9f3a;
+
+  /* Fontlar */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "Fira Code", "Cascadia Code", monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #0f0f13;
+    color: #e8e6df;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  h1 {
+    font-size: 1.875rem;
+    font-weight: 300;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.375;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  p {
+    line-height: 1.8;
+  }
+
+  code:not(pre code) {
+    background-color: #22222c;
+    color: #e88060;
+    border: 1px solid #2e2e3a;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-family: "Fira Code", "Cascadia Code", monospace;
+  }
+
+  pre {
+    background-color: #22222c;
+    border: 1px solid #2e2e3a;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+  }
+
+  a {
+    color: #e88060;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}

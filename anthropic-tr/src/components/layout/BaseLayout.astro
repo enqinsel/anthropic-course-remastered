@@ -1,0 +1,74 @@
+---
+import { SEO } from 'astro-seo';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import '../../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonical?: string;
+  type?: 'website' | 'article';
+  schema?: object;
+}
+
+const {
+  title,
+  description,
+  image = '/og-default.jpg',
+  canonical,
+  type = 'website',
+  schema,
+} = Astro.props;
+
+const siteUrl = 'https://anthropic-tr.com';
+const canonicalURL = canonical ?? new URL(Astro.url.pathname, siteUrl).href;
+const adSenseId = import.meta.env.ADSENSE_CLIENT_ID;
+---
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <SEO
+    title={`${title} | Anthropic TR`}
+    description={description}
+    canonical={canonicalURL}
+    openGraph={{
+      basic: {
+        title,
+        type,
+        image: image.startsWith('http') ? image : `${siteUrl}${image}`,
+      },
+      optional: { description, locale: 'tr_TR', siteName: 'Anthropic TR' },
+    }}
+    twitter={{ card: 'summary_large_image', title, description }}
+    extend={{
+      meta: [{ name: 'theme-color', content: '#0f0f13' }],
+    }}
+  />
+
+  {schema && (
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  )}
+
+  {adSenseId && (
+    <script
+      async
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adSenseId}`}
+      crossorigin="anonymous"
+    />
+  )}
+</head>
+<body>
+  <Header />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+</body>
+</html>

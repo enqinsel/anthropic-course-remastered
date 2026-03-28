@@ -1,0 +1,67 @@
+---
+export const prerender = false;
+---
+
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Giriş | Anthropic TR</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0f0f13; color: #e8e6df; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .card { background: #18181f; border: 1px solid #2e2e3a; border-radius: 12px; padding: 2rem; width: 340px; }
+    h1 { font-size: 1.2rem; font-weight: normal; margin-bottom: 1.5rem; }
+    label { display: block; font-size: 12px; color: #888; margin-bottom: 4px; }
+    input { width: 100%; background: #22222c; border: 1px solid #2e2e3a; border-radius: 6px; padding: 10px 12px; color: #e8e6df; font-size: 14px; margin-bottom: 12px; outline: none; }
+    input:focus { border-color: #c96442; }
+    button { width: 100%; background: #c96442; color: white; border: none; border-radius: 6px; padding: 10px; font-size: 14px; cursor: pointer; margin-top: 4px; }
+    button:hover { background: #e88060; }
+    .error { color: #e24b4a; font-size: 12px; margin-top: 8px; min-height: 18px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Admin Girişi</h1>
+    <label>Email</label>
+    <input type="email" id="email" placeholder="admin@ornek.com" />
+    <label>Şifre</label>
+    <input type="password" id="password" />
+    <button id="login-btn">Giriş Yap</button>
+    <p class="error" id="error-msg"></p>
+  </div>
+
+  <script>
+    import { createClient } from '@supabase/supabase-js';
+
+    const supabase = createClient(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    );
+
+    document.getElementById('login-btn')?.addEventListener('click', async () => {
+      const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+      const password = (document.getElementById('password') as HTMLInputElement).value;
+      const errEl = document.getElementById('error-msg')!;
+      errEl.textContent = '';
+
+      if (!email || !password) { errEl.textContent = 'Email ve şifre zorunlu.'; return; }
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error || !data.session) {
+        errEl.textContent = 'Hatalı email veya şifre.';
+        return;
+      }
+
+      document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=3600; SameSite=Lax`;
+      document.cookie = `sb-refresh-token=${data.session.refresh_token}; path=/; max-age=86400; SameSite=Lax`;
+      window.location.href = '/admin';
+    });
+
+    // Enter tuşu desteği
+    document.getElementById('password')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('login-btn')?.click();
+    });
+  </script>
+</body>
+</html>
