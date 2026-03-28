@@ -66,6 +66,7 @@ export interface FAQ {
 export interface ChapterBlock {
   type: 'html' | 'code';
   content: string;
+  language?: string | null;
 }
 
 export interface Chapter {
@@ -73,18 +74,24 @@ export interface Chapter {
   order_index: number;
   title: string;         // İngilizce orijinal
   title_tr: string;      // Türkçe çeviri
+  summary_en?: string | null;
+  summary_tr?: string | null;
+  source_path?: string | null;
+  source_url?: string | null;
   blocks_en: ChapterBlock[];
   blocks_tr: ChapterBlock[];
 }
 
 export interface Course {
-  id: string;
+  id?: string;
   course_id: string;
+  title?: string | null;
   title_tr: string;
+  description?: string | null;
   slug: string;
   description_tr: string | null;
   chapters: Chapter[];
   source_url: string | null;
   last_synced_at: string | null;
-  created_at: string;
+  created_at?: string;
 }

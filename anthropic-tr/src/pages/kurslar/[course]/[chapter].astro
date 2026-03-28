@@ -1,0 +1,347 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../../components/layout/BaseLayout.astro';
+import AdBanner from '../../../components/ads/AdBanner.astro';
+import { getAllCourses, getChapterDescription, getCourseChapterHref } from '../../../lib/courseData';
+import type { Chapter } from '../../../lib/types';
+
+export async function getStaticPaths() {
+  const courses = getAllCourses();
+  return courses.flatMap((course) =>
+    course.chapters.map((chapter, index) => ({
+      params: {
+        course: course.slug,
+        chapter: chapter.slug,
+      },
+      props: {
+        course,
+        chapter,
+        activeIndex: index,
+      },
+    }))
+  );
+}
+
+const { course, chapter, activeIndex } = Astro.props;
+const chapters: Chapter[] = Array.isArray(course.chapters) ? course.chapters : [];
+const previousChapter = activeIndex > 0 ? chapters[activeIndex - 1] : null;
+const nextChapter = activeIndex < chapters.length - 1 ? chapters[activeIndex + 1] : null;
+const pagePath = getCourseChapterHref(course.slug, chapter.slug);
+const canonical = `https://anthropic-tr.com${pagePath}`;
+const description = getChapterDescription(chapter, course.description_tr ?? course.title_tr);
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": "https://anthropic-tr.com" },
+        { "@type": "ListItem", "position": 2, "name": "Kurslar", "item": "https://anthropic-tr.com/kurslar" },
+        { "@type": "ListItem", "position": 3, "name": course.title_tr, "item": canonical },
+        { "@type": "ListItem", "position": 4, "name": chapter.title_tr, "item": canonical },
+      ],
+    },
+    {
+      "@type": "WebPage",
+      "@id": canonical,
+      "url": canonical,
+      "name": `${chapter.title_tr} | ${course.title_tr}`,
+      "description": description,
+      "inLanguage": "tr",
+      "isPartOf": {
+        "@type": "Course",
+        "name": course.title_tr,
+        "url": course.source_url ?? canonical,
+      },
+      "about": {
+        "@type": "LearningResource",
+        "name": chapter.title_tr,
+        "url": chapter.source_url ?? canonical,
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={`${chapter.title_tr} — ${course.title_tr}`}
+  description={description}
+  canonical={canonical}
+  schema={schema}
+>
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <nav class="text-xs text-muted mb-6">
+      <a href="/" class="hover:text-base no-underline">Ana Sayfa</a>
+      <span class="mx-2">›</span>
+      <a href="/kurslar" class="hover:text-base no-underline">Kurslar</a>
+      <span class="mx-2">›</span>
+      <span>{course.title_tr}</span>
+      <span class="mx-2">›</span>
+      <span>{chapter.title_tr}</span>
+    </nav>
+
+    <div class="lg:hidden mb-6">
+      <details class="bg-surface border border-border rounded-xl overflow-hidden">
+        <summary class="list-none px-4 py-3 text-sm cursor-pointer flex items-center justify-between">
+          <span>Bölümler</span>
+          <span class="text-muted">{String(chapter.order_index).padStart(2, '0')} / {String(chapters.length).padStart(2, '0')}</span>
+        </summary>
+        <nav class="border-t border-border px-2 py-2 space-y-1">
+          {chapters.map((item) => (
+            <a
+              href={getCourseChapterHref(course.slug, item.slug)}
+              data-chapter-slug={item.slug}
+              class:list={[
+                'block rounded-lg px-3 py-2 text-sm no-underline chapter-link',
+                item.slug === chapter.slug ? 'bg-surface2 text-accent-light' : 'text-muted hover:text-base hover:bg-surface2',
+              ]}
+            >
+              <span class="mr-2 text-xs font-mono opacity-70">{String(item.order_index).padStart(2, '0')}</span>
+              <span class="lang-tr">{item.title_tr}</span>
+              <span class="lang-en hidden">{item.title}</span>
+              <span class="done-check hidden text-success text-xs ml-2">✓</span>
+            </a>
+          ))}
+        </nav>
+      </details>
+    </div>
+
+    <div class="flex gap-8">
+      <aside class="w-64 flex-shrink-0 hidden lg:block">
+        <div class="sticky top-20">
+          <h2 class="text-xs text-muted uppercase tracking-widest mb-4">Bölümler</h2>
+
+          <nav class="space-y-1">
+            {chapters.map((item) => (
+              <a
+                href={getCourseChapterHref(course.slug, item.slug)}
+                data-chapter-slug={item.slug}
+                class:list={[
+                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors no-underline chapter-link',
+                  item.slug === chapter.slug
+                    ? 'bg-surface2 text-accent-light border-l-2 border-accent'
+                    : 'text-muted hover:text-base hover:bg-surface2',
+                ]}
+              >
+                <span class="text-xs font-mono text-muted w-6 flex-shrink-0">{String(item.order_index).padStart(2, '0')}</span>
+                <span class="flex-1 leading-snug lang-tr">{item.title_tr}</span>
+                <span class="flex-1 leading-snug lang-en hidden">{item.title}</span>
+                <span class="done-check hidden text-success text-xs">✓</span>
+              </a>
+            ))}
+          </nav>
+
+          <div class="mt-6">
+            <AdBanner slot="1111111111" format="rectangle" />
+          </div>
+        </div>
+      </aside>
+
+      <div class="flex-1 min-w-0">
+        <div class="mb-6 bg-surface border border-border rounded-xl p-5">
+          <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div class="max-w-2xl">
+              <span class="text-xs text-accent uppercase tracking-widest">Bölüm {chapter.order_index}</span>
+              <h1 class="text-2xl md:text-3xl font-light mt-2">{chapter.title_tr}</h1>
+              {description && <p class="text-sm text-muted mt-3 max-w-xl">{description}</p>}
+              <div class="flex flex-wrap gap-2 mt-4 text-xs">
+                {chapter.source_url && (
+                  <a
+                    href={chapter.source_url}
+                    target="_blank"
+                    rel="noopener"
+                    class="border border-border rounded-lg px-3 py-1.5 text-muted hover:border-accent no-underline transition-colors"
+                  >
+                    Orijinal notebook →
+                  </a>
+                )}
+                {course.source_url && (
+                  <a
+                    href={course.source_url}
+                    target="_blank"
+                    rel="noopener"
+                    class="border border-border rounded-lg px-3 py-1.5 text-muted hover:border-accent no-underline transition-colors"
+                  >
+                    Kurs kaynağı →
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1 bg-surface2 border border-border rounded-lg p-1 flex-shrink-0">
+              <button id="lang-tr" class="text-xs px-3 py-1.5 rounded-md transition-colors bg-accent text-white">TR</button>
+              <button id="lang-en" class="text-xs px-3 py-1.5 rounded-md transition-colors text-muted hover:text-base">EN</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6 bg-surface border border-border rounded-lg p-4">
+          <div class="flex justify-between text-xs text-muted mb-2">
+            <span>İlerleme</span>
+            <span id="progress-text">0 / {chapters.length}</span>
+          </div>
+          <div class="h-1 bg-surface2 rounded-full overflow-hidden">
+            <div id="progress-bar" class="h-full bg-accent rounded-full transition-all" style="width:0%" />
+          </div>
+        </div>
+
+        <article>
+          <div class="lang-tr space-y-4">
+            {(chapter.blocks_tr ?? []).map((block) =>
+              block.type === 'html'
+                ? <div class="prose-content leading-relaxed" set:html={block.content} />
+                : <pre class="my-4 overflow-x-auto text-sm"><code class={`language-${block.language ?? 'text'}`}>{block.content}</code></pre>
+            )}
+          </div>
+
+          <div class="lang-en hidden space-y-4">
+            {(chapter.blocks_en ?? []).map((block) =>
+              block.type === 'html'
+                ? <div class="prose-content leading-relaxed" set:html={block.content} />
+                : <pre class="my-4 overflow-x-auto text-sm"><code class={`language-${block.language ?? 'text'}`}>{block.content}</code></pre>
+            )}
+          </div>
+        </article>
+
+        <div class="mt-8">
+          <AdBanner slot="4444444444" format="leaderboard" />
+        </div>
+
+        <div class="flex justify-between items-center mt-10 pt-6 border-t border-border gap-4">
+          {previousChapter ? (
+            <a
+              href={getCourseChapterHref(course.slug, previousChapter.slug)}
+              class="text-sm text-muted hover:text-base no-underline flex items-center gap-2"
+            >
+              ← <span class="lang-tr">{previousChapter.title_tr}</span>
+              <span class="lang-en hidden">{previousChapter.title}</span>
+            </a>
+          ) : (
+            <span />
+          )}
+
+          <button
+            id="mark-done"
+            data-course-id={course.course_id}
+            data-chapter-slug={chapter.slug}
+            class="bg-accent hover:bg-accent-light text-white px-4 py-2 rounded-lg text-sm transition-colors flex-shrink-0"
+          >
+            Tamamla ✓
+          </button>
+
+          {nextChapter ? (
+            <a
+              href={getCourseChapterHref(course.slug, nextChapter.slug)}
+              class="text-sm text-muted hover:text-base no-underline flex items-center gap-2 text-right"
+            >
+              <span class="lang-tr">{nextChapter.title_tr}</span>
+              <span class="lang-en hidden">{nextChapter.title}</span> →
+            </a>
+          ) : (
+            <span />
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .prose-content :global(h1) { font-size: 1.5rem; font-weight: 300; margin: 1.5rem 0 0.75rem; }
+  .prose-content :global(h2) { font-size: 1.2rem; font-weight: 400; margin: 1.25rem 0 0.5rem; border-left: 2px solid var(--color-accent); padding-left: 0.75rem; }
+  .prose-content :global(h3) { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.4rem; color: var(--color-accent-light); }
+  .prose-content :global(p) { margin-bottom: 0.9rem; }
+  .prose-content :global(ul), .prose-content :global(ol) { padding-left: 1.5rem; margin-bottom: 1rem; }
+  .prose-content :global(li) { margin-bottom: 0.35rem; }
+  .prose-content :global(code) { font-family: var(--font-mono); font-size: 0.875em; background: var(--color-surface2); padding: 0.1em 0.35em; border-radius: 3px; }
+  .prose-content :global(pre) { background: var(--color-surface2); border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1rem; overflow-x: auto; margin: 1rem 0; }
+  .prose-content :global(pre code) { background: none; padding: 0; }
+  .prose-content :global(blockquote) { border-left: 3px solid var(--color-border); padding-left: 1rem; color: var(--color-muted); margin: 1rem 0; font-style: italic; }
+  .prose-content :global(table) { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.875rem; }
+  .prose-content :global(th), .prose-content :global(td) { border: 1px solid var(--color-border); padding: 0.5rem 0.75rem; }
+  .prose-content :global(th) { background: var(--color-surface2); font-weight: 500; }
+  .prose-content :global(a) { color: var(--color-accent-light); }
+  .prose-content :global(img) { width: 100%; border-radius: 0.85rem; border: 1px solid var(--color-border); margin: 1.25rem 0; background: var(--color-surface); }
+  .prose-content :global(details) { border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 0.85rem 1rem; background: color-mix(in srgb, var(--color-surface2) 55%, transparent); margin: 1rem 0; }
+  .prose-content :global(summary) { cursor: pointer; font-weight: 500; }
+  pre { background: var(--color-surface2); border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1rem; font-family: var(--font-mono); line-height: 1.6; }
+</style>
+
+<script>
+  const LANG_KEY = 'course-lang';
+
+  function getLang(): 'tr' | 'en' {
+    return (localStorage.getItem(LANG_KEY) as 'tr' | 'en') ?? 'tr';
+  }
+
+  function applyLang(lang: 'tr' | 'en') {
+    document.querySelectorAll<HTMLElement>('.lang-tr').forEach((element) => element.classList.toggle('hidden', lang !== 'tr'));
+    document.querySelectorAll<HTMLElement>('.lang-en').forEach((element) => element.classList.toggle('hidden', lang !== 'en'));
+    const btnTr = document.getElementById('lang-tr');
+    const btnEn = document.getElementById('lang-en');
+    const activeClass = 'text-xs px-3 py-1.5 rounded-md transition-colors bg-accent text-white';
+    const inactiveClass = 'text-xs px-3 py-1.5 rounded-md transition-colors text-muted hover:text-base';
+    if (btnTr) btnTr.className = lang === 'tr' ? activeClass : inactiveClass;
+    if (btnEn) btnEn.className = lang === 'en' ? activeClass : inactiveClass;
+    localStorage.setItem(LANG_KEY, lang);
+  }
+
+  applyLang(getLang());
+  document.getElementById('lang-tr')?.addEventListener('click', () => applyLang('tr'));
+  document.getElementById('lang-en')?.addEventListener('click', () => applyLang('en'));
+
+  function getProgress(courseId: string): Set<string> {
+    try {
+      const raw = localStorage.getItem(`progress-${courseId}`);
+      return new Set(raw ? JSON.parse(raw) : []);
+    } catch {
+      return new Set();
+    }
+  }
+
+  function saveProgress(courseId: string, done: Set<string>) {
+    localStorage.setItem(`progress-${courseId}`, JSON.stringify([...done]));
+  }
+
+  function updateUI(courseId: string, total: number) {
+    const done = getProgress(courseId);
+    const pct = total ? (done.size / total) * 100 : 0;
+    const bar = document.getElementById('progress-bar');
+    const txt = document.getElementById('progress-text');
+    if (bar) bar.style.width = `${pct}%`;
+    if (txt) txt.textContent = `${done.size} / ${total}`;
+    document.querySelectorAll<HTMLElement>('.chapter-link').forEach((link) => {
+      const check = link.querySelector<HTMLElement>('.done-check');
+      if (check) check.classList.toggle('hidden', !done.has(link.dataset.chapterSlug ?? ''));
+    });
+  }
+
+  const button = document.getElementById('mark-done') as HTMLButtonElement | null;
+  if (button) {
+    const chapterSlug = button.dataset.chapterSlug ?? '';
+    const courseId = button.dataset.courseId ?? '';
+    const total = document.querySelectorAll('.chapter-link').length;
+    updateUI(courseId, total);
+    const done = getProgress(courseId);
+    if (done.has(chapterSlug)) {
+      button.textContent = 'Tamamlandı ✓';
+      button.classList.replace('bg-accent', 'bg-success');
+    }
+    button.addEventListener('click', () => {
+      const current = getProgress(courseId);
+      if (current.has(chapterSlug)) {
+        current.delete(chapterSlug);
+        button.textContent = 'Tamamla ✓';
+        button.classList.replace('bg-success', 'bg-accent');
+      } else {
+        current.add(chapterSlug);
+        button.textContent = 'Tamamlandı ✓';
+        button.classList.replace('bg-accent', 'bg-success');
+      }
+      saveProgress(courseId, current);
+      updateUI(courseId, total);
+    });
+  }
+</script>

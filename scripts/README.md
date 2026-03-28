@@ -1,6 +1,6 @@
 # Content Agent
 
-Anthropic'in açık kaynak [courses](https://github.com/anthropics/courses) reposundaki Jupyter Notebook dosyalarını çekip `anthropic-tr/src/content/courses/*.json` dosyalarına aktaran Python scripti.
+Anthropic'in açık kaynak [courses](https://github.com/anthropics/courses) reposundaki Jupyter Notebook dosyalarını senkronize edip `anthropic-tr/src/content/courses/*.json` ve `anthropic-tr/public/course-media/` altına yayına hazır içerik üreten Python scripti.
 
 ## Kurulum
 
@@ -37,13 +37,17 @@ python content_agent.py --clean
 
 ## Nasıl Çalışır
 
-1. `_repo_cache/` klasörüne `--depth=1` ile repo klonlanır (ilk çalıştırma) ya da `git pull` yapılır
-2. Her kurs için ilgili klasördeki `.ipynb` dosyaları sıralanır
-3. Her notebook'tan markdown ve kod hücreleri `content_blocks` dizisine aktarılır
-4. `src/content/courses/[slug].json` dosyasındaki `chapters` ve `last_synced_at` güncellenir; `title_tr`, `description_tr` gibi çeviri alanlarına dokunulmaz
+1. `_repo_cache/` klasörüne repo klonlanır ya da mevcut önbellek güncellenir
+2. Her kurs için doğru notebook kökü seçilir; provider kopyaları ve tekrar eden varyantlar ayıklanır
+3. Notebook markdown ve kod hücreleri güvenli biçimde ayrıştırılır; `h1`, code block, inline code ve HTML yapısı korunur
+4. Notebook içi görseller ve attachment dosyaları `anthropic-tr/public/course-media/` altına taşınır
+5. Mevcut Türkçe JSON yalnızca güvenli seed ve cleanup kaynağı olarak kullanılır; bozuk placeholder ve çevrilmiş HTML etiketleri temizlenir
+6. `src/content/courses/[slug].json` dosyaları chapter-level metadata (`source_url`, `summary_tr`, `summary_en`) ile yeniden yazılır
 
 ## Notlar
 
 - `_repo_cache/` git'e eklenmez (`.gitignore`)
-- İçerik şimdilik İngilizce aktarılır; Türkçe çeviri sonraki fazda eklenecek
+- Çeviri serbest paket çevirisiyle değil, mevcut Türkçe içerik seed'i + terminoloji cleanup katmanıyla üretilir
+- İlk görünür `h1` içerikten çıkarılır; başlık site chrome'unda render edilir
+- Görseller artık relative notebook path yerine yerel `/course-media/...` URL'leriyle servis edilir
 - Senkronizasyon sonrası `npm run build` ile site yeniden derlenmeli

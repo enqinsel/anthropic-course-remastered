@@ -2,32 +2,9 @@
 export const prerender = true;
 
 import BaseLayout from '../../components/layout/BaseLayout.astro';
-import type { Chapter } from '../../lib/types';
+import { getAllCourses, getCourseLandingHref } from '../../lib/courseData';
 
-interface CourseJson {
-  course_id: string;
-  title_tr: string;
-  slug: string;
-  description_tr: string | null;
-  chapters: Chapter[];
-  source_url: string | null;
-  last_synced_at: string | null;
-}
-
-// Tanımlı sırayla kursları yükle
-const ORDER = [
-  'api-temelleri',
-  'prompt-muhendisligi',
-  'gercek-dunya-prompting',
-  'prompt-degerlendirme',
-  'arac-kullanimi',
-];
-
-const courseFiles = import.meta.glob<{ default: CourseJson }>('../../content/courses/*.json', { eager: true });
-const allCourses = Object.values(courseFiles).map(m => m.default);
-const courses = ORDER
-  .map(id => allCourses.find(c => c.slug === id))
-  .filter(Boolean) as CourseJson[];
+const courses = getAllCourses();
 
 const icons: Record<string, string> = {
   'api-temelleri': '⚙️',
@@ -66,7 +43,7 @@ const schema = {
     {courses.length > 0 ? (
       <div class="grid md:grid-cols-2 gap-6">
         {courses.map((course, i) => (
-          <a href={`/kurslar/${course.slug}`} class="group bg-surface border border-border hover:border-accent rounded-xl p-6 no-underline transition-colors">
+          <a href={getCourseLandingHref(course)} class="group bg-surface border border-border hover:border-accent rounded-xl p-6 no-underline transition-colors">
             <div class="flex items-start gap-4">
               <div class="text-3xl">{icons[course.slug] ?? '📚'}</div>
               <div class="flex-1">

@@ -6,6 +6,7 @@ Anthropic'in resmi kurs materyallerinin Türkçe versiyonu.
 - **Frontend:** Astro 6 + Tailwind CSS v4
 - **Veritabanı:** Supabase (PostgreSQL) — yalnızca blog yazıları
 - **İçerik:** `src/content/courses/*.json` (kurslar) ve `src/content/faqs.json` (SSS)
+- **Medya:** `public/course-media/` (notebook görselleri ve attachment dosyaları)
 - **Hosting:** Netlify
 
 ## Yerel Geliştirme
@@ -44,6 +45,11 @@ npm run sync
 cd ..
 python scripts/content_agent.py --course prompt-muhendisligi
 ```
+
+Senkronizasyon sonrası kurs bölümleri statik route olarak üretilir:
+
+- ` /kurslar/[course]/[chapter]`
+- Eski ` /kurslar/[course]?chapter=...` linkleri yeni kalıcı URL'ye yönlendirilir
 
 ## Deployment
 
@@ -86,7 +92,8 @@ anthropic-tr/
 │   └── styles/global.css
 ├── public/
 │   ├── robots.txt
-│   └── favicon.svg
+│   ├── favicon.svg
+│   └── course-media/   # content_agent tarafından doldurulur
 ├── netlify.toml
 ├── schema.sql
 └── .env.example

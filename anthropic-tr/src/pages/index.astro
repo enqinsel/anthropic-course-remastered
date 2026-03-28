@@ -6,6 +6,7 @@ import Card from '../components/ui/Card.astro';
 import AdBanner from '../components/ads/AdBanner.astro';
 import { supabase } from '../lib/supabase';
 import faqsData from '../content/faqs.json';
+import { getAllCourses, getCourseLandingHref } from '../lib/courseData';
 
 // Son 3 blog yazısını çek
 const { data: posts } = await supabase
@@ -17,6 +18,9 @@ const { data: posts } = await supabase
 
 // SSS önizleme — JSON dosyasından
 const faqs = faqsData.slice(0, 5);
+const courseHrefMap = Object.fromEntries(
+  getAllCourses().map((course) => [course.slug, getCourseLandingHref(course)])
+);
 
 const schema = {
   "@context": "https://schema.org",
@@ -32,11 +36,11 @@ const schema = {
 };
 
 const learningPath = [
-  { num: '01', title: 'API Temelleri', desc: 'Claude SDK kurulumu, temel parametreler, ilk API çağrısı', href: '/kurslar/api-temelleri' },
-  { num: '02', title: 'Prompt Mühendisliği', desc: '9 bölümlü kapsamlı öğretici, uygulamalı alıştırmalar', href: '/kurslar/prompt-muhendisligi' },
-  { num: '03', title: 'Gerçek Dünya Uygulamaları', desc: 'Üretim ortamları için ileri düzey prompting', href: '/kurslar/gercek-dunya-prompting' },
-  { num: '04', title: 'Prompt Değerlendirme', desc: 'Kaliteli çıktı için eval sistemleri kurma', href: '/kurslar/prompt-degerlendirme' },
-  { num: '05', title: 'Araç Kullanımı', desc: 'Function calling ve ajan sistemleri', href: '/kurslar/arac-kullanimi' },
+  { num: '01', slug: 'api-temelleri', title: 'API Temelleri', desc: 'Claude SDK kurulumu, temel parametreler, ilk API çağrısı' },
+  { num: '02', slug: 'prompt-muhendisligi', title: 'Prompt Mühendisliği', desc: '9 bölümlü kapsamlı öğretici, uygulamalı alıştırmalar' },
+  { num: '03', slug: 'gercek-dunya-prompting', title: 'Gerçek Dünya Uygulamaları', desc: 'Üretim ortamları için ileri düzey prompting' },
+  { num: '04', slug: 'prompt-degerlendirme', title: 'Prompt Değerlendirme', desc: 'Kaliteli çıktı için eval sistemleri kurma' },
+  { num: '05', slug: 'arac-kullanimi', title: 'Araç Kullanımı', desc: 'Function calling ve ajan sistemleri' },
 ];
 ---
 
@@ -78,7 +82,7 @@ const learningPath = [
       <div class="absolute left-6 top-0 bottom-0 w-px bg-border" />
       <div class="space-y-4">
         {learningPath.map(step => (
-          <a href={step.href} class="relative flex gap-5 group no-underline">
+          <a href={courseHrefMap[step.slug] ?? `/kurslar/${step.slug}`} class="relative flex gap-5 group no-underline">
             <div class="relative z-10 w-12 h-12 bg-surface border border-border group-hover:border-accent rounded-full flex items-center justify-center text-sm text-muted group-hover:text-accent transition-colors flex-shrink-0">
               {step.num}
             </div>

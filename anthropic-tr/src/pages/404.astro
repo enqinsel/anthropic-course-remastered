@@ -1,0 +1,26 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../components/layout/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Sayfa Bulunamadı"
+  description="Aradığınız sayfa artık burada olmayabilir ya da adres yanlış yazılmış olabilir."
+>
+  <div class="max-w-3xl mx-auto px-4 py-20 text-center">
+    <span class="text-xs text-accent uppercase tracking-widest">404</span>
+    <h1 class="text-4xl font-light mt-3 mb-4">Sayfa Bulunamadı</h1>
+    <p class="text-muted max-w-lg mx-auto mb-8">
+      Aradığınız sayfa taşınmış olabilir, bağlantı eski kalmış olabilir ya da adres hatalı yazılmış olabilir.
+    </p>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <a href="/" class="bg-accent hover:bg-accent-light text-white px-5 py-2.5 rounded-lg text-sm no-underline transition-colors">
+        Ana sayfaya dön
+      </a>
+      <a href="/kurslar" class="bg-surface border border-border hover:border-accent text-base px-5 py-2.5 rounded-lg text-sm no-underline transition-colors">
+        Kursları aç
+      </a>
+    </div>
+  </div>
+</BaseLayout>
