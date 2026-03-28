@@ -142,7 +142,7 @@ const postUrl = `https://anthropic-tr.com/blog/${post.slug}`;
               <pre class="my-4"><code class={`language-${block.language ?? 'text'}`}>{block.code}</code></pre>
             );
             if (block.type === 'callout') {
-              const colors: Record<string, string> = {
+              const colors = {
                 info: 'border-info bg-info/5 text-info',
                 warn: 'border-warn bg-warn/5 text-warn',
                 success: 'border-success bg-success/5 text-success',
