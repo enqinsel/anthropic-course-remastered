@@ -76,8 +76,7 @@ const allTags = [...new Set((allPosts ?? []).flatMap(p => p.tags ?? []))].sort()
           </div>
         ) : (
           <div class="text-center py-16 text-muted">
-            <p>Henüz yazı yok. Admin panelinden ilk yazını yaz!</p>
-            <a href="/admin/blog-editor" class="text-sm text-accent mt-3 block no-underline hover:underline">→ Yeni yazı yaz</a>
+            <p>Henüz yazı yok.</p>
           </div>
         )}
       </div>

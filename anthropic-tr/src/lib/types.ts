@@ -63,13 +63,18 @@ export interface FAQ {
   created_at: string;
 }
 
+export interface ChapterBlock {
+  type: 'html' | 'code';
+  content: string;
+}
+
 export interface Chapter {
-  id: string;
-  num: string;
-  title_tr: string;
-  content_tr: string;
-  code_examples: string[];
-  source_file: string;
+  slug: string;
+  order_index: number;
+  title: string;         // İngilizce orijinal
+  title_tr: string;      // Türkçe çeviri
+  blocks_en: ChapterBlock[];
+  blocks_tr: ChapterBlock[];
 }
 
 export interface Course {

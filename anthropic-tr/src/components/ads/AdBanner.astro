@@ -3,25 +3,5 @@ interface Props {
   slot: string;
   format?: 'auto' | 'rectangle' | 'leaderboard';
 }
-const { slot, format = 'auto' } = Astro.props;
-const clientId = import.meta.env.ADSENSE_CLIENT_ID;
-const minH = ({ auto: 'min-h-[100px]', rectangle: 'min-h-[250px]', leaderboard: 'min-h-[90px]' } as const)[format] ?? 'min-h-[100px]';
+// Reklam alanları geçici olarak gizlendi
 ---
-
-{clientId ? (
-  <div class={`${minH} flex items-center justify-center`}>
-    <ins
-      class="adsbygoogle"
-      style="display:block"
-      data-ad-client={clientId}
-      data-ad-slot={slot}
-      data-ad-format={format}
-      data-full-width-responsive="true"
-    />
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
-) : (
-  <div class={`${minH} bg-surface2 border border-dashed border-border rounded-lg flex items-center justify-center`}>
-    <span class="text-xs text-muted">Reklam Alanı ({format})</span>
-  </div>
-)}
