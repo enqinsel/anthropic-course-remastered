@@ -5,25 +5,8 @@
 [build.environment]
   NODE_VERSION = "22"
 
-# Admin sayfaları SSR (dinamik)
-[[redirects]]
-  from = "/admin/*"
-  to = "/admin/:splat"
-  status = 200
-  force = true
-
-# API endpoint'leri
-[[redirects]]
-  from = "/api/*"
-  to = "/api/:splat"
-  status = 200
-  force = true
-
-# 404
-[[redirects]]
-  from = "/*"
-  to = "/404"
-  status = 404
+# Astro Netlify adapter, SSR ve API route yönlendirmelerini build sırasında üretir.
+# Buraya eklenen catch-all redirect'ler SSR function'a ulaşmadan route'ları 404'e düşürür.
 
 # Güvenlik header'ları
 [[headers]]
