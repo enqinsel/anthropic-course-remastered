@@ -58,7 +58,7 @@
         },
         {
           "type": "html",
-          "content": "<h2>Müşteri değerlendirmeleri</h2>\n<p>Yeni, parlak bir İsviçre Çakısı satın aldığınızı hayal edin. Düzinelerce alet ve aletle birlikte gelir, ancak siz onu esas olarak kamp yaparken teneke kutuları açmak için kullanmakla ilgileniyorsunuz. Elbette, tırnaklarınızı törpüleyebilmesi veya şarap şişelerinin mantarını açabilmesi de harika, ama gerçekte konserve kutularını ne kadar iyi açıyor? Büyük dil modelleri için hızlı değerlendirmelerin devreye girdiği yer burasıdır.</p>\n<p>LLM'ler metin için süper güçlü İsviçre Ordusu bıçakları gibidir. Şiir yazmaktan yazılım kodlamaya kadar dil ile her türlü harika şeyi yapabilirler. Ancak LLM'yi belirli bir görev için (müşteri hizmetleri e-postalarını yanıtlamak veya ürün açıklamaları oluşturmak gibi) kullandığınızda, söz konusu işte ne kadar iyi performans gösterdiğini bilmeniz gerekir.</p>\n<p>Hızlı değerlendirmelerin veya kısaca \"değerlendirmelerin\" devreye girdiği yer burasıdır. Prompt değerlendirmeler (müşteri değerlendirmeleri olarak da bilinir), bir LLM'nin sizin özel kullanım durumunuzda ne kadar iyi performans gösterdiğini ölçmek için tasarlanmış sistematik testlerdir. LLM'ların genelleştirilmiş yetenekleri ile iş uygulamanızın benzersiz talepleri arasında kritik bir köprü görevi görürler. Sağlam değerlendirmeler uygulayarak, model ve prompt kombinasyonunun yalnızca genel kriterleri karşılamakla kalmayıp, aynı zamanda gerçekleştirmesini istediğiniz belirli görevlerde de üstün olmasını sağlayabilirsiniz.</p>\n<p>Değerlendirmelerin başlıca faydaları şunlardır:</p>\n<ul>\n<li>Yinelemeli istem iyileştirme - İstemimin v2'si, özel görevimde v1'den daha iyi performans gösteriyor mu?</li>\n<li>Dağıtımdan önce ve sonra kalite güvencesi ve istem değişiklikleri - en son istem güncellememiz bir gerilemeye neden oldu mu?</li>\n<li>Objektif model karşılaştırması - Anthropic'in en yeni modeline geçerek mevcut değerlendirme performansımızı koruyabilir miyiz veya daha iyi hale getirebilir miyiz?</li>\n<li>Potansiyel maliyet tasarrufu - Anthropic'in en ucuz ve en hızlı modeline geçip mevcut değerlendirme performansımızı koruyabilir miyiz?</li>\n</ul>\n<p>Bilgi istemlerini yazarken ve optimize ederken, değerlendirmelere dayanan yinelenen bir süreç izliyoruz:</p>\n<p><img alt=\"işlem.png\" src=\"ek:işlem.png\" /></p>"
+          "content": "<h2>Müşteri değerlendirmeleri</h2>\n<p>Yeni, parlak bir İsviçre Çakısı satın aldığınızı hayal edin. Düzinelerce alet ve aletle birlikte gelir, ancak siz onu esas olarak kamp yaparken teneke kutuları açmak için kullanmakla ilgileniyorsunuz. Elbette, tırnaklarınızı törpüleyebilmesi veya şarap şişelerinin mantarını açabilmesi de harika, ama gerçekte konserve kutularını ne kadar iyi açıyor? Büyük dil modelleri için hızlı değerlendirmelerin devreye girdiği yer burasıdır.</p>\n<p>LLM'ler metin için süper güçlü İsviçre Ordusu bıçakları gibidir. Şiir yazmaktan yazılım kodlamaya kadar dil ile her türlü harika şeyi yapabilirler. Ancak LLM'yi belirli bir görev için (müşteri hizmetleri e-postalarını yanıtlamak veya ürün açıklamaları oluşturmak gibi) kullandığınızda, söz konusu işte ne kadar iyi performans gösterdiğini bilmeniz gerekir.</p>\n<p>Hızlı değerlendirmelerin veya kısaca \"değerlendirmelerin\" devreye girdiği yer burasıdır. Prompt değerlendirmeler (müşteri değerlendirmeleri olarak da bilinir), bir LLM'nin sizin özel kullanım durumunuzda ne kadar iyi performans gösterdiğini ölçmek için tasarlanmış sistematik testlerdir. LLM'ların genelleştirilmiş yetenekleri ile iş uygulamanızın benzersiz talepleri arasında kritik bir köprü görevi görürler. Sağlam değerlendirmeler uygulayarak, model ve prompt kombinasyonunun yalnızca genel kriterleri karşılamakla kalmayıp, aynı zamanda gerçekleştirmesini istediğiniz belirli görevlerde de üstün olmasını sağlayabilirsiniz.</p>\n<p>Değerlendirmelerin başlıca faydaları şunlardır:</p>\n<ul>\n<li>Yinelemeli istem iyileştirme - İstemimin v2'si, özel görevimde v1'den daha iyi performans gösteriyor mu?</li>\n<li>Dağıtımdan önce ve sonra kalite güvencesi ve istem değişiklikleri - en son istem güncellememiz bir gerilemeye neden oldu mu?</li>\n<li>Objektif model karşılaştırması - Anthropic'in en yeni modeline geçerek mevcut değerlendirme performansımızı koruyabilir miyiz veya daha iyi hale getirebilir miyiz?</li>\n<li>Potansiyel maliyet tasarrufu - Anthropic'in en ucuz ve en hızlı modeline geçip mevcut değerlendirme performansımızı koruyabilir miyiz?</li>\n</ul>\n<p>Bilgi istemlerini yazarken ve optimize ederken, değerlendirmelere dayanan yinelenen bir süreç izliyoruz:</p>\n<p><img alt=\"işlem.png\" src=\"/course-media/prompt-degerlendirme/attachments/01-intro-to-evals/process.png\" /></p>"
         },
         {
           "type": "html",
@@ -196,11 +196,11 @@
         },
         {
           "type": "html",
-          "content": "<p>Daha sonra değişkenler (<code>{ }</code>) butonuna tıklayarak değişkenlerimiz için test değerlerini ayarlayabiliriz:</p>\n<p><img alt=\"değişkenler_button.png\" src=\"ek:değişkenler_button.png\" /></p>\n<p>Bu, <code>{{SOURCE_CODE}}</code> ve <code>{{SOURCE_LANGUAGE}}</code> değişkenleri için değerleri girmemizi isteyen bir iletişim kutusu açacaktır:</p>\n<p><img alt=\"adding_variables.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/adding_variables.png\" /></p>"
+          "content": "<p>Daha sonra değişkenler (<code>{ }</code>) butonuna tıklayarak değişkenlerimiz için test değerlerini ayarlayabiliriz:</p>\n<p><img alt=\"değişkenler_button.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/variables_button.png\" /></p>\n<p>Bu, <code>{{SOURCE_CODE}}</code> ve <code>{{SOURCE_LANGUAGE}}</code> değişkenleri için değerleri girmemizi isteyen bir iletişim kutusu açacaktır:</p>\n<p><img alt=\"adding_variables.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/adding_variables.png\" /></p>"
         },
         {
           "type": "html",
-          "content": "<p>Daha sonra run tuşuna basabilir ve modelden elde edilen çıktıyı görebiliriz:</p>\n<p><img alt=\"ilk_çıkış.png\" src=\"ek:ilk_çıkış.png\" /></p>"
+          "content": "<p>Daha sonra run tuşuna basabilir ve modelden elde edilen çıktıyı görebiliriz:</p>\n<p><img alt=\"ilk_çıkış.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/first_output.png\" /></p>"
         },
         {
           "type": "html",
@@ -208,11 +208,11 @@
         },
         {
           "type": "html",
-          "content": "<p>Bu, ilk sonucumuzun önceden doldurulmuş olduğu değerlendirme görünümünü açar:</p>\n<p><img alt=\"değerlendir1.png\" src=\"ek:değerlendir1.png\" /></p>"
+          "content": "<p>Bu, ilk sonucumuzun önceden doldurulmuş olduğu değerlendirme görünümünü açar:</p>\n<p><img alt=\"değerlendir1.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/evaluate1.png\" /></p>"
         },
         {
           "type": "html",
-          "content": "<p>Daha sonra, bazı yeni test senaryoları eklemek için \"Satır Ekle\" düğmesini tıklayabiliriz.  İki yeni test senaryosu ekleyelim: biraz Ruby kodu ve biraz C# kodu: </p>\n<p><img alt=\"değerlendirin2.png\" src=\"ek:değerlendirin2.png\" /></p>"
+          "content": "<p>Daha sonra, bazı yeni test senaryoları eklemek için \"Satır Ekle\" düğmesini tıklayabiliriz.  İki yeni test senaryosu ekleyelim: biraz Ruby kodu ve biraz C# kodu: </p>\n<p><img alt=\"değerlendirin2.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/evaluate2.png\" /></p>"
         },
         {
           "type": "html",
@@ -220,7 +220,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Elde ettiğimiz sonuçlar bunlar:</p>\n<p><img alt=\"değerlendirin3.png\" src=\"ek:değerlendirin3.png\" /></p>"
+          "content": "<p>Elde ettiğimiz sonuçlar bunlar:</p>\n<p><img alt=\"değerlendirin3.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/evaluate3.png\" /></p>"
         },
         {
           "type": "html",
@@ -248,15 +248,15 @@
         },
         {
           "type": "html",
-          "content": "<hr />\n<h2>Değerlendirmeyi yeniden çalıştırma</h2>\n<p>Daha sonra değerlendirme görünümüne geri dönebiliriz:</p>\n<p><img alt=\"değerlendir4.png\" src=\"ek:değerlendir4.png\" /></p>\n<p>Dikkat edin, sol üstte bunun istemin ikinci versiyonu olduğunu belirten \"v2\"yi görüyoruz.  \"Kalanları Çalıştır\"a tıklayıp diğer test senaryolarının çıktılarına bir göz atalım:</p>\n<p><img alt=\"değerlendirin5.png\" src=\"ek:değerlendirin5.png\" /></p>"
+          "content": "<hr />\n<h2>Değerlendirmeyi yeniden çalıştırma</h2>\n<p>Daha sonra değerlendirme görünümüne geri dönebiliriz:</p>\n<p><img alt=\"değerlendir4.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/evaluate4.png\" /></p>\n<p>Dikkat edin, sol üstte bunun istemin ikinci versiyonu olduğunu belirten \"v2\"yi görüyoruz.  \"Kalanları Çalıştır\"a tıklayıp diğer test senaryolarının çıktılarına bir göz atalım:</p>\n<p><img alt=\"değerlendirin5.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/evaluate5.png\" /></p>"
         },
         {
           "type": "html",
-          "content": "<p>Yeni çıktılar harika görünüyor! Hepsi herhangi bir giriş ve açıklayıcı metni atlar ve yalnızca çevrilmiş Python kodunu içeren <code>&lt;python_code&gt;</code> etiketlerini içerir.  Hadi devam edelim ve bunları hepsi 5/5 puan olarak işaretleyelim!</p>\n<p><img alt=\"değerlendirin6.png\" src=\"ek:değerlendirin6.png\" /></p>"
+          "content": "<p>Yeni çıktılar harika görünüyor! Hepsi herhangi bir giriş ve açıklayıcı metni atlar ve yalnızca çevrilmiş Python kodunu içeren <code>&lt;python_code&gt;</code> etiketlerini içerir.  Hadi devam edelim ve bunları hepsi 5/5 puan olarak işaretleyelim!</p>\n<p><img alt=\"değerlendirin6.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/evaluate6.png\" /></p>"
         },
         {
           "type": "html",
-          "content": "<hr />\n<h2>Sonuçların karşılaştırılması</h2>\n<p>Artık iki farklı istemi denediğimize göre sonuçları yan yana karşılaştırabiliriz. Sağ üstteki \"+ Karşılaştırma Ekle\" butonuna tıklayabilir ve v2 sonuçlarımızı karşılaştırmak için istemimizin önceki bir sürümünü (v1) seçebiliriz.  Bu, her iki istem için model çıktılarını ve insan tarafından derecelendirilen puanları yan yana gösterecektir:</p>\n<p><img alt=\"karşılaştırma.png\" src=\"ek:karşılaştırma.png\" /></p>"
+          "content": "<hr />\n<h2>Sonuçların karşılaştırılması</h2>\n<p>Artık iki farklı istemi denediğimize göre sonuçları yan yana karşılaştırabiliriz. Sağ üstteki \"+ Karşılaştırma Ekle\" butonuna tıklayabilir ve v2 sonuçlarımızı karşılaştırmak için istemimizin önceki bir sürümünü (v1) seçebiliriz.  Bu, her iki istem için model çıktılarını ve insan tarafından derecelendirilen puanları yan yana gösterecektir:</p>\n<p><img alt=\"karşılaştırma.png\" src=\"/course-media/prompt-degerlendirme/attachments/02-workbench-evals/comparison.png\" /></p>"
         },
         {
           "type": "html",
@@ -491,7 +491,7 @@
       "blocks_tr": [
         {
           "type": "html",
-          "content": "<p>Bu derste, bir sonraki derste daha gerçekçi bir konuyu ele almadan önce, çok basit bir kod dereceli değerlendirme örneğine göz atarak başlayacağız.  Bu şemada özetlenen süreci izleyeceğiz:</p>\n<p><img alt=\"işlem.png\" src=\"ek:işlem.png\" /></p>\n<p>Kaba adımlar şunlardır:<br />\n1. Değerlendirme test setimizi tanımlayarak başlayın<br />\n1. İlk istem denememizi yazın<br />\n2. Değerlendirme sürecimizi yürütün ve puan alın<br />\n3. Değerlendirme sonuçlarına göre istemimizi değiştirin<br />\n4. Değiştirilen istemi değerlendirme sürecimizde çalıştırın ve daha iyi bir puan alacağınızı umuyoruz!</p>\n<p>Bu süreci takip etmeyi deneyelim!</p>\n<hr />"
+          "content": "<p>Bu derste, bir sonraki derste daha gerçekçi bir konuyu ele almadan önce, çok basit bir kod dereceli değerlendirme örneğine göz atarak başlayacağız.  Bu şemada özetlenen süreci izleyeceğiz:</p>\n<p><img alt=\"işlem.png\" src=\"/course-media/prompt-degerlendirme/attachments/03-code-graded-evals-03-code-graded/process.png\" /></p>\n<p>Kaba adımlar şunlardır:<br />\n1. Değerlendirme test setimizi tanımlayarak başlayın<br />\n1. İlk istem denememizi yazın<br />\n2. Değerlendirme sürecimizi yürütün ve puan alın<br />\n3. Değerlendirme sonuçlarına göre istemimizi değiştirin<br />\n4. Değiştirilen istemi değerlendirme sürecimizde çalıştırın ve daha iyi bir puan alacağınızı umuyoruz!</p>\n<p>Bu süreci takip etmeyi deneyelim!</p>\n<hr />"
         },
         {
           "type": "html",
@@ -846,7 +846,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Daha yeni ve geliştirilmiş istemle %100 doğruluk elde ettik! </p>\n<p>Yine, bu diyagramda özetlenen standart istem + değerlendirme döngüsünü izliyoruz:</p>\n<p><img alt=\"işlem.png\" src=\"ek:işlem.png\" /></p>\n<p><strong>Bunun çok küçük bir veri seti kullanılarak yapılan çok basit bir değerlendirme olduğunu lütfen unutmayın.  Bu ders, kod dereceli değerlendirmelerin genel sürecini göstermeyi amaçlamaktadır ancak üretim ölçeğinde değerlendirmenin kanonik bir örneği anlamına gelmemektedir!</strong></p>\n<p>Bu yaklaşım işe yarar ancak tüm değerlendirme mantığını sıfırdan yazmak biraz zahmetlidir ve sonuçları yan yana karşılaştırmak zordur.  Peki ya çizelgeler ve grafiklerle güzel biçimlendirilmiş sonuçlar üreten ve birden fazla modelde değerlendirme yapmayı kolaylaştıran bir araç kullansaydık?  Bir sonraki derste tam da bunu göreceğiz! Daha sonra, üretim kullanım senaryoları için tekrarlanabilir, ölçeklenebilir değerlendirmeler yazmayı kolaylaştıran bir değerlendirme çerçevesine göz atacağız.</p>"
+          "content": "<p>Daha yeni ve geliştirilmiş istemle %100 doğruluk elde ettik! </p>\n<p>Yine, bu diyagramda özetlenen standart istem + değerlendirme döngüsünü izliyoruz:</p>\n<p><img alt=\"işlem.png\" src=\"/course-media/prompt-degerlendirme/attachments/04-code-graded-classification-evals/process.png\" /></p>\n<p><strong>Bunun çok küçük bir veri seti kullanılarak yapılan çok basit bir değerlendirme olduğunu lütfen unutmayın.  Bu ders, kod dereceli değerlendirmelerin genel sürecini göstermeyi amaçlamaktadır ancak üretim ölçeğinde değerlendirmenin kanonik bir örneği anlamına gelmemektedir!</strong></p>\n<p>Bu yaklaşım işe yarar ancak tüm değerlendirme mantığını sıfırdan yazmak biraz zahmetlidir ve sonuçları yan yana karşılaştırmak zordur.  Peki ya çizelgeler ve grafiklerle güzel biçimlendirilmiş sonuçlar üreten ve birden fazla modelde değerlendirme yapmayı kolaylaştıran bir araç kullansaydık?  Bir sonraki derste tam da bunu göreceğiz! Daha sonra, üretim kullanım senaryoları için tekrarlanabilir, ölçeklenebilir değerlendirmeler yazmayı kolaylaştıran bir değerlendirme çerçevesine göz atacağız.</p>"
         }
       ]
     },
@@ -1048,7 +1048,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Bu, çıktı ve puanlamaya ilişkin belirli ayrıntıları içeren bir model açar:</p>\n<p><img alt=\"detaylar.png\" src=\"ek:detaylar.png\" /></p>"
+          "content": "<p>Bu, çıktı ve puanlamaya ilişkin belirli ayrıntıları içeren bir model açar:</p>\n<p><img alt=\"detaylar.png\" src=\"/course-media/prompt-degerlendirme/attachments/05-prompt-foo-code-graded-animals/details.png\" /></p>"
         },
         {
           "type": "html",
@@ -1080,7 +1080,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Şimdi 4 sütun içeren şu çıktıya benzer bir şey göreceğiz: </p>\n<p><img alt=\"üç_prompt_eval.png\" src=\"ek: three_prompt_eval.png\" /></p>"
+          "content": "<p>Şimdi 4 sütun içeren şu çıktıya benzer bir şey göreceğiz: </p>\n<p><img alt=\"üç_prompt_eval.png\" src=\"/course-media/prompt-degerlendirme/attachments/05-prompt-foo-code-graded-animals/three_prompt_eval.png\" /></p>"
         },
         {
           "type": "html",
@@ -1410,11 +1410,11 @@
         },
         {
           "type": "html",
-          "content": "<p>Her model çıktısı ve karşılık gelen iddia dereceleri hakkında daha fazla ayrıntı görmek için büyüteç simgesine tıklayabileceğimizi unutmayın.  İlk satırın ikinci girişine daha yakından bakalım:</p>\n<p><img alt=\"detaylar1.png\" src=\"ek:detaylar1.png\" /></p>\n<p>Çıktının orijinal model dereceli iddiayı geçtiğini ve aslında konu dışı soruyu yanıtlamayı reddettiğini görebiliriz.  Ayrıca eklediğimiz ikinci iddiada da çıktının başarısız olduğunu görebiliyoruz çünkü \"Yanıt, özür dileyen bir ifade olan 'Üzgünüm' ile başlıyor.\"</p>"
+          "content": "<p>Her model çıktısı ve karşılık gelen iddia dereceleri hakkında daha fazla ayrıntı görmek için büyüteç simgesine tıklayabileceğimizi unutmayın.  İlk satırın ikinci girişine daha yakından bakalım:</p>\n<p><img alt=\"detaylar1.png\" src=\"/course-media/prompt-degerlendirme/attachments/08-prompt-foo-model-graded/details1.png\" /></p>\n<p>Çıktının orijinal model dereceli iddiayı geçtiğini ve aslında konu dışı soruyu yanıtlamayı reddettiğini görebiliriz.  Ayrıca eklediğimiz ikinci iddiada da çıktının başarısız olduğunu görebiliyoruz çünkü \"Yanıt, özür dileyen bir ifade olan 'Üzgünüm' ile başlıyor.\"</p>"
         },
         {
           "type": "html",
-          "content": "<p>Şimdi ilk satırdaki üçüncü girişi yakınlaştıralım: </p>\n<p><img alt=\"detaylar2.png\" src=\"ek:detaylar2.png\" /></p>\n<p>Bu çıktı her iki iddiayı da geçti!</p>\n<p><strong>Lütfen bu veri kümesinin gerçekçi bir değerlendirme için çok küçük olduğunu unutmayın.</strong></p>\n<p>Promptfoo'nun yerleşik model dereceli iddiaları çok faydalıdır, ancak tam model dereceli metrikler ve süreç üzerinde daha fazla kontrole ihtiyaç duyabileceğimiz durumlar vardır.  Bir sonraki dersimizde kendi özel model sınıflandırma fonksiyonlarımızı tanımlamaya göz atacağız!</p>"
+          "content": "<p>Şimdi ilk satırdaki üçüncü girişi yakınlaştıralım: </p>\n<p><img alt=\"detaylar2.png\" src=\"/course-media/prompt-degerlendirme/attachments/08-prompt-foo-model-graded/details2.png\" /></p>\n<p>Bu çıktı her iki iddiayı da geçti!</p>\n<p><strong>Lütfen bu veri kümesinin gerçekçi bir değerlendirme için çok küçük olduğunu unutmayın.</strong></p>\n<p>Promptfoo'nun yerleşik model dereceli iddiaları çok faydalıdır, ancak tam model dereceli metrikler ve süreç üzerinde daha fazla kontrole ihtiyaç duyabileceğimiz durumlar vardır.  Bir sonraki dersimizde kendi özel model sınıflandırma fonksiyonlarımızı tanımlamaya göz atacağız!</p>"
         }
       ]
     },
@@ -1500,19 +1500,19 @@
         },
         {
           "type": "html",
-          "content": "<p>Test sonuçları hakkında daha fazla bilgi görüntülemek için her hücredeki büyütece tıklayabiliriz:</p>\n<p><img alt=\"açıklama.png\" src=\"ek:açıklama.png\" /></p>\n<p>Bu özel çıkışın, ton puanı çok düşük olduğundan özel llm-eval işlevimizde başarısız olduğunu görebiliriz.</p>"
+          "content": "<p>Test sonuçları hakkında daha fazla bilgi görüntülemek için her hücredeki büyütece tıklayabiliriz:</p>\n<p><img alt=\"açıklama.png\" src=\"/course-media/prompt-degerlendirme/attachments/09-custom-model-graded-prompt-foo/explanation.png\" /></p>\n<p>Bu özel çıkışın, ton puanı çok düşük olduğundan özel llm-eval işlevimizde başarısız olduğunu görebiliriz.</p>"
         },
         {
           "type": "html",
-          "content": "<p>Ayrıca, sonuçların en üst satırında her istem için notların bir özeti gösterilir: </p>\n<p><img alt=\"genel_skorlar.png\" src=\"ek:genel_skorlar.png\" /></p>\n<p><code>best_summary</code> istemimiz şaşırtıcı olmayan bir şekilde en iyi performansı gösteriyor!</p>"
+          "content": "<p>Ayrıca, sonuçların en üst satırında her istem için notların bir özeti gösterilir: </p>\n<p><img alt=\"genel_skorlar.png\" src=\"/course-media/prompt-degerlendirme/attachments/09-custom-model-graded-prompt-foo/overall_scores.png\" /></p>\n<p><code>best_summary</code> istemimiz şaşırtıcı olmayan bir şekilde en iyi performansı gösteriyor!</p>"
         },
         {
           "type": "html",
-          "content": "<p>Kontrol panelinin üst kısmında puanların görselleştirilmesine yardımcı olacak bazı grafikler de görüntülenir:</p>\n<p><img alt=\"dağıtım.png\" src=\"ek:dağıtım.png\" /></p>\n<p>Yukarıdaki ekran görüntüsünde:</p>\n<ul>\n<li>kırmızı bizim <code>basic_summarize</code> istemimizdir</li>\n<li>mavi bizim <code>better_summarize</code> istemimizdir</li>\n<li>yeşil bizim <code>best_summarize</code> istemimizdir</li>\n</ul>\n<p>Grafik bize <code>best_summarize</code> isteminin testimizde asla başarısız olmadığını, aynı zamanda tüm girdilerde diğer istemlerden daha yüksek puan aldığını gösteriyor.</p>"
+          "content": "<p>Kontrol panelinin üst kısmında puanların görselleştirilmesine yardımcı olacak bazı grafikler de görüntülenir:</p>\n<p><img alt=\"dağıtım.png\" src=\"/course-media/prompt-degerlendirme/attachments/09-custom-model-graded-prompt-foo/distribution.png\" /></p>\n<p>Yukarıdaki ekran görüntüsünde:</p>\n<ul>\n<li>kırmızı bizim <code>basic_summarize</code> istemimizdir</li>\n<li>mavi bizim <code>better_summarize</code> istemimizdir</li>\n<li>yeşil bizim <code>best_summarize</code> istemimizdir</li>\n</ul>\n<p>Grafik bize <code>best_summarize</code> isteminin testimizde asla başarısız olmadığını, aynı zamanda tüm girdilerde diğer istemlerden daha yüksek puan aldığını gösteriyor.</p>"
         }
       ]
     }
   ],
   "source_url": "https://github.com/anthropics/courses/tree/master/prompt_evaluations",
-  "last_synced_at": "2026-03-30T13:59:49.162633+00:00"
+  "last_synced_at": "2026-03-30T14:11:30.383941+00:00"
 }

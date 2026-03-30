@@ -561,6 +561,41 @@ def rewrite_seed_media_urls(
     return SRC_ATTR_RE.sub(replace, seed_html)
 
 
+def asset_url_is_renderable(url: str) -> bool:
+    normalized = url.strip()
+    lower = normalized.lower()
+    if not normalized:
+        return False
+    if lower.startswith(("http://", "https://", "#", "mailto:", "data:")):
+        return True
+    if lower.startswith("/"):
+        return (PROJECT_ROOT / "public" / normalized.lstrip("/")).exists()
+    return False
+
+
+def repair_unresolved_seed_image_urls(seed_html: str, fallback_html: str) -> str:
+    fallback_urls = [match.group(2) for match in HTML_IMG_RE.finditer(fallback_html)]
+    if not fallback_urls:
+        return seed_html
+
+    repaired_parts: list[str] = []
+    last_end = 0
+
+    for index, match in enumerate(HTML_IMG_RE.finditer(seed_html)):
+        repaired_parts.append(seed_html[last_end:match.start()])
+        prefix, url, suffix = match.groups()
+        repaired_url = url
+        if not asset_url_is_renderable(url) and index < len(fallback_urls):
+            candidate = fallback_urls[index]
+            if asset_url_is_renderable(candidate):
+                repaired_url = candidate
+        repaired_parts.append(f"{prefix}{repaired_url}{suffix}")
+        last_end = match.end()
+
+    repaired_parts.append(seed_html[last_end:])
+    return "".join(repaired_parts)
+
+
 def extract_first_paragraph(html_text: str) -> str | None:
     for match in PARAGRAPH_RE.finditer(html_text):
         plain = html.unescape(TAG_RE.sub(" ", match.group(1)))
@@ -759,6 +794,10 @@ def cleaned_translation_html(
         nb_path=nb_path,
         course_dir=course_dir,
         attachment_paths=attachment_paths,
+    )
+    cleaned = repair_unresolved_seed_image_urls(
+        seed_html=cleaned,
+        fallback_html=html_en,
     )
     cleaned = restore_placeholders(
         seed_html=cleaned,

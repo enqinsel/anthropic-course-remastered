@@ -707,7 +707,7 @@
         },
         {
           "type": "html",
-          "content": "<h3>Nihai hedef</h3>\n<p>Göreviniz, bir araştırma konusunu ve istenen sayıda makaleyi kabul eden <code>get_research_help</code> adlı bir işlevi uygulamaktır. Bu işlev, olası Vikipedi makalelerinin listesini oluşturmak için Claude'u kullanmalı ve yukarıdan <code>generate_wikipedia_reading_list</code> işlevini çağırmalıdır.  İşte birkaç örnek işlev çağrısı:</p>\n<pre><code class=\"language-py\">get_research_help(\"Pirates Across The World\", 7)\n\nget_research_help(\"History of Hawaii\", 3)\n\nget_research_help(\"are animals conscious?\", 3)\n</code></pre>\n<p>Bu 3 işlev çağrısından sonra, çıktı <code>research_reading.md</code> dosyamız şöyle görünür (output/research_reading.md'de kendiniz kontrol edin): </p>\n<p><img alt=\"araştırma_okuma.png\" src=\"ek:araştırma_okuma.png\" /></p>"
+          "content": "<h3>Nihai hedef</h3>\n<p>Göreviniz, bir araştırma konusunu ve istenen sayıda makaleyi kabul eden <code>get_research_help</code> adlı bir işlevi uygulamaktır. Bu işlev, olası Vikipedi makalelerinin listesini oluşturmak için Claude'u kullanmalı ve yukarıdan <code>generate_wikipedia_reading_list</code> işlevini çağırmalıdır.  İşte birkaç örnek işlev çağrısı:</p>\n<pre><code class=\"language-py\">get_research_help(\"Pirates Across The World\", 7)\n\nget_research_help(\"History of Hawaii\", 3)\n\nget_research_help(\"are animals conscious?\", 3)\n</code></pre>\n<p>Bu 3 işlev çağrısından sonra, çıktı <code>research_reading.md</code> dosyamız şöyle görünür (output/research_reading.md'de kendiniz kontrol edin): </p>\n<p><img alt=\"araştırma_okuma.png\" src=\"/course-media/arac-kullanimi/attachments/02-your-first-simple-tool/research_reading.png\" /></p>"
         },
         {
           "type": "html",
@@ -1628,7 +1628,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Örnek bir konuşma oturumunun ekran görüntüsü: </p>\n<p><img alt=\"egzersiz_konuşması.png\" src=\"ek:egzersiz_konuşması.png\" /></p>"
+          "content": "<p>Örnek bir konuşma oturumunun ekran görüntüsü: </p>\n<p><img alt=\"egzersiz_konuşması.png\" src=\"/course-media/arac-kullanimi/attachments/04-complete-workflow/exercise_conversation.png\" /></p>"
         }
       ]
     },
@@ -2456,11 +2456,11 @@
         },
         {
           "type": "html",
-          "content": "<p>Burada chatbot ile örnek bir etkileşimi gösteren bir resim bulunmaktadır.</p>\n<p><img alt=\"konuşma1.png\" src=\"ek:konuşma1.png\" /></p>"
+          "content": "<p>Burada chatbot ile örnek bir etkileşimi gösteren bir resim bulunmaktadır.</p>\n<p><img alt=\"konuşma1.png\" src=\"/course-media/arac-kullanimi/attachments/06-chatbot-with-multiple-tools/conversation1.png\" /></p>"
         },
         {
           "type": "html",
-          "content": "<p>Burada, sahne arkasında neler olup bittiğini anlamayı kolaylaştırmak için Claude bir araç kullandığında açıkça bir mesaj yazdırdığımız sohbet robotuyla başka bir etkileşim var: </p>\n<p><img alt=\"konuşma2.png\" src=\"ek:konuşma2.png\" /></p>"
+          "content": "<p>Burada, sahne arkasında neler olup bittiğini anlamayı kolaylaştırmak için Claude bir araç kullandığında açıkça bir mesaj yazdırdığımız sohbet robotuyla başka bir etkileşim var: </p>\n<p><img alt=\"konuşma2.png\" src=\"/course-media/arac-kullanimi/attachments/06-chatbot-with-multiple-tools/conversation2.png\" /></p>"
         },
         {
           "type": "html",
@@ -2674,7 +2674,7 @@
         },
         {
           "type": "html",
-          "content": "<p>İşte bir örnek konuşma:</p>\n<p><img alt=\"konuşma3.png\" src=\"ek:konuşma3.png\" /></p>"
+          "content": "<p>İşte bir örnek konuşma:</p>\n<p><img alt=\"konuşma3.png\" src=\"/course-media/arac-kullanimi/attachments/06-chatbot-with-multiple-tools/conversation3.png\" /></p>"
         },
         {
           "type": "html",
@@ -2699,7 +2699,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Yukarıdaki sistem istemi ayrıntılarını ekledikten sonra örnek bir konuşmayı burada bulabilirsiniz:</p>\n<p><img alt=\"konuşma4.png\" src=\"ek:konuşma4.png\" /></p>"
+          "content": "<p>Yukarıdaki sistem istemi ayrıntılarını ekledikten sonra örnek bir konuşmayı burada bulabilirsiniz:</p>\n<p><img alt=\"konuşma4.png\" src=\"/course-media/arac-kullanimi/attachments/06-chatbot-with-multiple-tools/conversation4.png\" /></p>"
         },
         {
           "type": "html",
@@ -2707,7 +2707,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Bu komut dosyasıyla yeterince oynarsanız muhtemelen başka sorunları da fark edeceksiniz.  Çok bariz ve çok sorunlu bir konu aşağıdaki konuşmada örnekleniyor: </p>\n<p><img alt=\"konuşma5.png\" src=\"ek:konuşma5.png\" /></p>"
+          "content": "<p>Bu komut dosyasıyla yeterince oynarsanız muhtemelen başka sorunları da fark edeceksiniz.  Çok bariz ve çok sorunlu bir konu aşağıdaki konuşmada örnekleniyor: </p>\n<p><img alt=\"konuşma5.png\" src=\"/course-media/arac-kullanimi/attachments/06-chatbot-with-multiple-tools/conversation5.png\" /></p>"
         },
         {
           "type": "html",
@@ -2720,7 +2720,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Güncellenen sistem istemini kullanan asistanla yapılan görüşmenin ekran görüntüsü:</p>\n<p><img alt=\"konuşma6.png\" src=\"ek:konuşma6.png\" /></p>"
+          "content": "<p>Güncellenen sistem istemini kullanan asistanla yapılan görüşmenin ekran görüntüsü:</p>\n<p><img alt=\"konuşma6.png\" src=\"/course-media/arac-kullanimi/attachments/06-chatbot-with-multiple-tools/conversation6.png\" /></p>"
         },
         {
           "type": "html",
@@ -2732,7 +2732,7 @@
         },
         {
           "type": "html",
-          "content": "<h2>Opus'a özgü bir problem</h2>\n<p>Opus ve araçlarla çalışırken model, kullanıcıya gerçekten yanıt vermeden önce genellikle düşüncelerini <code>&lt;thinking&gt;</code> veya <code>&lt;reflection&gt;</code> etiketlerinde yayınlar.  Bunun bir örneğini aşağıdaki ekran görüntüsünde görebilirsiniz: </p>\n<p><img alt=\"konuşma7.png\" src=\"ek:konuşma7.png\" /></p>"
+          "content": "<h2>Opus'a özgü bir problem</h2>\n<p>Opus ve araçlarla çalışırken model, kullanıcıya gerçekten yanıt vermeden önce genellikle düşüncelerini <code>&lt;thinking&gt;</code> veya <code>&lt;reflection&gt;</code> etiketlerinde yayınlar.  Bunun bir örneğini aşağıdaki ekran görüntüsünde görebilirsiniz: </p>\n<p><img alt=\"konuşma7.png\" src=\"/course-media/arac-kullanimi/attachments/06-chatbot-with-multiple-tools/conversation7.png\" /></p>"
         },
         {
           "type": "html",
@@ -2745,7 +2745,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Örnek bir konuşma çıktısına göz atın: </p>\n<p><img alt=\"konuşma8.png\" src=\"ek:konuşma8.png\" /></p>"
+          "content": "<p>Örnek bir konuşma çıktısına göz atın: </p>\n<p><img alt=\"konuşma8.png\" src=\"/course-media/arac-kullanimi/attachments/06-chatbot-with-multiple-tools/conversation8.png\" /></p>"
         },
         {
           "type": "html",
@@ -2758,7 +2758,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Yukarıdaki değişikliğin etkisini gösteren bir ekran görüntüsü: </p>\n<p><img alt=\"konuşma9.png\" src=\"ek:konuşma9.png\" /></p>"
+          "content": "<p>Yukarıdaki değişikliğin etkisini gösteren bir ekran görüntüsü: </p>\n<p><img alt=\"konuşma9.png\" src=\"/course-media/arac-kullanimi/attachments/06-chatbot-with-multiple-tools/conversation9.png\" /></p>"
         },
         {
           "type": "html",
@@ -2766,7 +2766,7 @@
         },
         {
           "type": "html",
-          "content": "<h2>Son versiyon</h2>\n<p>İşte bu betiğin çıktıyı renklendiren bir sürümüyle yapılan daha uzun bir görüşmenin ekran görüntüsü.</p>\n<p><img alt=\"konuşma10.png\" src=\"ek:konuşma10.png\" /></p>"
+          "content": "<h2>Son versiyon</h2>\n<p>İşte bu betiğin çıktıyı renklendiren bir sürümüyle yapılan daha uzun bir görüşmenin ekran görüntüsü.</p>\n<p><img alt=\"konuşma10.png\" src=\"/course-media/arac-kullanimi/attachments/06-chatbot-with-multiple-tools/conversation10.png\" /></p>"
         },
         {
           "type": "html",
@@ -2788,5 +2788,5 @@
     }
   ],
   "source_url": "https://github.com/anthropics/courses/tree/master/tool_use",
-  "last_synced_at": "2026-03-30T13:59:54.217620+00:00"
+  "last_synced_at": "2026-03-30T14:11:32.395216+00:00"
 }
