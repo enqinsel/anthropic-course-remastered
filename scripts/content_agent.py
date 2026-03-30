@@ -21,6 +21,7 @@ import re
 import shutil
 import subprocess
 import sys
+import textwrap
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from difflib import SequenceMatcher
@@ -48,6 +49,7 @@ PROJECT_ROOT = SCRIPT_DIR.parent / "anthropic-tr"
 CONTENT_DIR = PROJECT_ROOT / "src" / "content" / "courses"
 PUBLIC_MEDIA_DIR = PROJECT_ROOT / "public" / "course-media"
 GITHUB_BRANCH = "master"
+LEGACY_TRANSLATION_REF = "99681b9"
 
 COURSE_MAP: dict[str, CourseConfig] = {
     "api-temelleri": CourseConfig(folder="anthropic_api_fundamentals"),
@@ -161,6 +163,49 @@ TRANSLATION_REPLACEMENTS: list[tuple[str, str]] = [
     (r"\btakım\b", "araç"),
     (r"\bTakım\b", "Araç"),
 ]
+
+
+def html_override(content: str) -> str:
+    return textwrap.dedent(content).strip()
+
+
+MANUAL_HTML_OVERRIDES: dict[str, dict[str, dict[int, str]]] = {
+    "api-temelleri": {
+        "01-getting-started": {
+            0: html_override(
+                """
+                <h2>Ders hedefleri</h2>
+                <p>Bu ilk derste şunları öğreneceksiniz:</p>
+                <ul>
+                <li>gerekli paketleri kurmayı ve API ile kimlik doğrulamayı</li>
+                <li>Claude AI asistanına ilk isteğinizi göndermeyi</li>
+                </ul>
+                """
+            ),
+        },
+        "05-streaming": {
+            14: html_override(
+                """
+                <p>Her akış aşağıdaki sırayla bir dizi etkinlik içerir:</p>
+                <ul>
+                <li><strong>MessageStartEvent</strong> - boş içeriğe sahip bir mesaj</li>
+                <li><strong>İçerik blokları dizisi</strong> - her biri şunları içerir:
+                <ul>
+                <li>bir <strong>ContentBlockStartEvent</strong></li>
+                <li>bir veya daha fazla <strong>ContentBlockDeltaEvent</strong></li>
+                <li>bir <strong>ContentBlockStopEvent</strong></li>
+                </ul>
+                </li>
+                <li>son mesajdaki üst düzey değişiklikleri gösteren bir veya daha fazla <strong>MessageDeltaEvent</strong></li>
+                <li>son bir <strong>MessageStopEvent</strong></li>
+                </ul>
+                <p>Yukarıdaki yanıtta yalnızca tek bir içerik bloğu vardı. Bu şema, o blokla ilişkili tüm olayları gösterir:</p>
+                <p><img alt="content_block_streaming.png" src="/course-media/api-temelleri/attachments/05-streaming/content_block_streaming.png" /></p>
+                """
+            ),
+        },
+    },
+}
 
 
 def _run(cmd: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess:
@@ -447,6 +492,13 @@ def normalize_html_for_match(value: str) -> str:
     return html.unescape(compact).strip()
 
 
+def normalize_plain_text_for_match(value: str) -> str:
+    plain = TAG_RE.sub(" ", value)
+    plain = html.unescape(plain)
+    plain = re.sub(r"\s+", " ", plain)
+    return plain.strip().lower()
+
+
 def cleanup_translation_plain_text(text: str) -> str:
     cleaned = text
     for pattern, replacement in TRANSLATION_REPLACEMENTS:
@@ -577,44 +629,113 @@ def load_existing_course(slug: str) -> dict:
         return json.load(handle)
 
 
-def find_seed_chapter(existing_course: dict, slug: str, title_en: str) -> dict | None:
-    chapters = existing_course.get("chapters", [])
+_LEGACY_COURSE_CACHE: dict[str, dict] = {}
+
+
+def load_legacy_course(slug: str) -> dict:
+    if slug in _LEGACY_COURSE_CACHE:
+        return _LEGACY_COURSE_CACHE[slug]
+
+    relative_path = CONTENT_DIR.relative_to(SCRIPT_DIR.parent) / f"{slug}.json"
+    result = _run(
+        ["git", "show", f"{LEGACY_TRANSLATION_REF}:{relative_path.as_posix()}"],
+        cwd=SCRIPT_DIR.parent,
+    )
+    if result.returncode != 0 or not result.stdout.strip():
+        _LEGACY_COURSE_CACHE[slug] = {}
+        return {}
+
+    try:
+        course = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        course = {}
+
+    _LEGACY_COURSE_CACHE[slug] = course
+    return course
+
+
+def find_seed_chapters(courses: list[dict], slug: str, title_en: str) -> list[dict]:
     normalized_title = title_en.strip().lower()
+    matches: list[dict] = []
 
-    for chapter in chapters:
-        if chapter.get("slug") == slug and str(chapter.get("title", "")).strip().lower() == normalized_title:
-            return chapter
-    for chapter in chapters:
-        if str(chapter.get("title", "")).strip().lower() == normalized_title:
-            return chapter
-    for chapter in chapters:
-        if chapter.get("slug") == slug:
-            return chapter
-    return None
+    for course in courses:
+        chapters = course.get("chapters", [])
+        for chapter in chapters:
+            if chapter.get("slug") == slug and str(chapter.get("title", "")).strip().lower() == normalized_title:
+                matches.append(chapter)
+    for course in courses:
+        chapters = course.get("chapters", [])
+        for chapter in chapters:
+            if str(chapter.get("title", "")).strip().lower() == normalized_title:
+                matches.append(chapter)
+    for course in courses:
+        chapters = course.get("chapters", [])
+        for chapter in chapters:
+            if chapter.get("slug") == slug:
+                matches.append(chapter)
+    return matches
 
 
-def match_seed_html_block(seed_blocks_en: list[dict], seed_blocks_tr: list[dict], html_en: str) -> str | None:
+def match_seed_html_block(
+    seed_sources: list[tuple[list[dict], list[dict]]],
+    html_en: str,
+    preferred_index: int | None = None,
+) -> str | None:
     normalized_target = normalize_html_for_match(html_en)
+    plain_target = normalize_plain_text_for_match(html_en)
     best_match: tuple[float, str] | None = None
 
-    for index, block in enumerate(seed_blocks_en):
-        if block.get("type") != "html":
-            continue
-        if index >= len(seed_blocks_tr):
-            continue
-        tr_block = seed_blocks_tr[index]
-        if tr_block.get("type") != "html":
-            continue
+    if preferred_index is not None:
+        for seed_blocks_en, seed_blocks_tr in seed_sources:
+            candidate_indexes = [preferred_index, preferred_index + 1, preferred_index - 1]
+            seen_indexes: set[int] = set()
+            for candidate_index in candidate_indexes:
+                if candidate_index < 0 or candidate_index in seen_indexes:
+                    continue
+                seen_indexes.add(candidate_index)
+                if candidate_index >= len(seed_blocks_en) or candidate_index >= len(seed_blocks_tr):
+                    continue
+                seed_block = seed_blocks_en[candidate_index]
+                tr_block = seed_blocks_tr[candidate_index]
+                if seed_block.get("type") != "html" or tr_block.get("type") != "html":
+                    continue
+                seed_html = seed_block.get("content", "")
+                translated_html = tr_block.get("content", "")
+                if normalize_html_for_match(seed_html) == normalize_html_for_match(translated_html):
+                    continue
+                if normalize_html_for_match(seed_html) == normalized_target:
+                    return translated_html
+                if normalize_plain_text_for_match(seed_html) == plain_target:
+                    return translated_html
 
-        normalized_seed = normalize_html_for_match(block.get("content", ""))
-        if normalized_seed == normalized_target:
-            return tr_block.get("content", "")
+    for seed_blocks_en, seed_blocks_tr in seed_sources:
+        for index, block in enumerate(seed_blocks_en):
+            if block.get("type") != "html":
+                continue
+            if index >= len(seed_blocks_tr):
+                continue
+            tr_block = seed_blocks_tr[index]
+            if tr_block.get("type") != "html":
+                continue
+            translated_html = tr_block.get("content", "")
+            if normalize_html_for_match(block.get("content", "")) == normalize_html_for_match(translated_html):
+                continue
 
-        score = SequenceMatcher(None, normalized_target, normalized_seed).ratio()
-        if best_match is None or score > best_match[0]:
-            best_match = (score, tr_block.get("content", ""))
+            normalized_seed = normalize_html_for_match(block.get("content", ""))
+            if normalized_seed == normalized_target:
+                return translated_html
 
-    if best_match and best_match[0] >= 0.74:
+            score = SequenceMatcher(None, normalized_target, normalized_seed).ratio()
+            plain_score = SequenceMatcher(
+                None,
+                plain_target,
+                normalize_plain_text_for_match(block.get("content", "")),
+            ).ratio()
+            score = max(score, plain_score)
+            if best_match is None or score > best_match[0]:
+                best_match = (score, translated_html)
+
+    if best_match and best_match[0] >= 0.82:
         return best_match[1]
     return None
 
@@ -655,6 +776,7 @@ def process_notebook(
     nb_path: Path,
     index: int,
     existing_course: dict,
+    legacy_course: dict,
 ) -> dict:
     nb = nbformat.read(str(nb_path), as_version=4)
     notebook_root = (course_dir / config.notebook_root) if config.notebook_root else course_dir
@@ -662,11 +784,18 @@ def process_notebook(
     chapter_slug = build_chapter_slug(relative_notebook_path, index)
     title_en = notebook_title(nb, nb_path.name)
 
-    seed_chapter = find_seed_chapter(existing_course=existing_course, slug=chapter_slug, title_en=title_en)
-    seed_blocks_en = seed_chapter.get("blocks_en", []) if seed_chapter else []
-    seed_blocks_tr = seed_chapter.get("blocks_tr", []) if seed_chapter else []
+    seed_chapters = find_seed_chapters(
+        courses=[existing_course, legacy_course],
+        slug=chapter_slug,
+        title_en=title_en,
+    )
+    primary_seed = seed_chapters[0] if seed_chapters else None
+    seed_sources = [
+        (chapter.get("blocks_en", []), chapter.get("blocks_tr", []))
+        for chapter in seed_chapters
+    ]
 
-    title_tr = cleanup_translation_plain_text(seed_chapter.get("title_tr", title_en) if seed_chapter else title_en)
+    title_tr = cleanup_translation_plain_text(primary_seed.get("title_tr", title_en) if primary_seed else title_en)
 
     blocks_en: list[dict] = []
     blocks_tr: list[dict] = []
@@ -679,6 +808,8 @@ def process_notebook(
             continue
 
         if cell.cell_type == "markdown":
+            html_block_index = sum(1 for block in blocks_en if block["type"] == "html")
+            block_index = len(blocks_en)
             attachment_paths = write_attachments(
                 course_slug=course_slug,
                 chapter_slug=chapter_slug,
@@ -695,12 +826,23 @@ def process_notebook(
             html_tr = cleaned_translation_html(
                 html_en=html_en,
                 markdown_source=rewritten_markdown,
-                seed_html=match_seed_html_block(seed_blocks_en, seed_blocks_tr, html_en),
+                seed_html=match_seed_html_block(
+                    seed_sources=seed_sources,
+                    html_en=html_en,
+                    preferred_index=html_block_index,
+                ),
                 course_slug=course_slug,
                 nb_path=nb_path,
                 course_dir=course_dir,
                 attachment_paths=attachment_paths,
             )
+            manual_override = (
+                MANUAL_HTML_OVERRIDES.get(course_slug, {})
+                .get(chapter_slug, {})
+                .get(block_index)
+            )
+            if manual_override:
+                html_tr = manual_override
 
             if is_primary_heading_html(html_en, title_en):
                 continue
@@ -763,6 +905,7 @@ def extract_chapters(slug: str, config: CourseConfig, existing_course: dict) -> 
     )
 
     chapters: list[dict] = []
+    legacy_course = load_legacy_course(slug)
     for index, nb_path in enumerate(notebooks):
         console.print(f"  [dim]→[/dim] {nb_path.relative_to(course_dir)}")
         chapter = process_notebook(
@@ -772,6 +915,7 @@ def extract_chapters(slug: str, config: CourseConfig, existing_course: dict) -> 
             nb_path=nb_path,
             index=index,
             existing_course=existing_course,
+            legacy_course=legacy_course,
         )
         chapters.append(chapter)
     return chapters

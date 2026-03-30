@@ -10,7 +10,7 @@
       "title": "Tutorial How-To",
       "title_tr": "Öğretici Nasıl Yapılır",
       "summary_en": "This tutorial requires an API key for interaction. If you don't have an API key, you can sign up for one via the Anthropic Console or view our static tutorial answer key instead.",
-      "summary_tr": "This tutorial requires an API key for interaction. If you don't have an API key, you can sign up for one via the Anthropic Console or view our static tutorial answer key instead.",
+      "summary_tr": "Bu eğitim, etkileşim için bir API anahtarı gerektirir . API anahtarınız yoksa Anthropic Console aracılığıyla bir API anahtarına kaydolabilir veya bunun yerine statik eğitim cevap anahtarımızı görüntüleyebilirsiniz.",
       "source_path": "00_Tutorial_How-To.ipynb",
       "source_url": "https://github.com/anthropics/courses/tree/master/prompt_engineering_interactive_tutorial/Anthropic%201P/00_Tutorial_How-To.ipynb",
       "blocks_en": [
@@ -66,7 +66,7 @@
       "blocks_tr": [
         {
           "type": "html",
-          "content": "<p>This tutorial <strong>requires an API key</strong> for interaction. If you don't have an API key, you can sign up for one via the <a href=\"https://console.anthropic.com/\">Anthropic Console</a> or view our <a href=\"https://docs.google.com/spreadsheets/u/0/d/1jIxjzUWG-6xBVIa2ay6yDpLyeuOh_hR_ZB75a47KX_E/edit\">static tutorial answer key</a> instead.</p>"
+          "content": "<p>Bu eğitim, etkileşim için <strong>bir API anahtarı gerektirir</strong>. API anahtarınız yoksa <a href=\"https://console.anthropic.com/\">Anthropic Console</a> aracılığıyla bir API anahtarına kaydolabilir veya bunun yerine <a href=\"https://docs.google.com/spreadsheets/u/0/d/1jIxjzUWG-6xBVIa2ay6yDpLyeuOh_hR_ZB75a47KX_E/edit\">statik eğitim cevap anahtarımızı</a> görüntüleyebilirsiniz.</p>"
         },
         {
           "type": "html",
@@ -79,7 +79,7 @@
         },
         {
           "type": "html",
-          "content": "<ol start=\"3\">\n<li>Set up your API key and model name. Replace <code>\"your_api_key_here\"</code> with your actual Anthropic API key.</li>\n</ol>"
+          "content": "<ol>\n<li>API anahtarınızı ve model adınızı ayarlayın. <code>\"your_api_key_here\"</code>'i gerçek Anthropic API anahtarınızla değiştirin.</li>\n</ol>"
         },
         {
           "type": "code",
@@ -88,11 +88,11 @@
         },
         {
           "type": "html",
-          "content": "<ol start=\"4\">\n<li>Run the notebook cells in order, following the instructions provided.</li>\n</ol>"
+          "content": "<ol>\n<li>Sağlanan talimatları izleyerek dizüstü bilgisayar hücrelerini sırayla çalıştırın.</li>\n</ol>"
         },
         {
           "type": "html",
-          "content": "<hr />\n<h2>Usage Notes &amp; Tips 💡</h2>\n<ul>\n<li>\n<p>This course uses Claude 3 Haiku with temperature 0. We will talk more about temperature later in the course. For now, it's enough to understand that these settings yield more deterministic results. All prompt engineering techniques in this course also apply to previous generation legacy Claude models such as Claude 2 and Claude Instant 1.2.</p>\n</li>\n<li>\n<p>You can use <code>Shift + Enter</code> to execute the cell and move to the next one.</p>\n</li>\n<li>\n<p>When you reach the bottom of a tutorial page, navigate to the next numbered file in the folder, or to the next numbered folder if you're finished with the content within that chapter file.</p>\n</li>\n</ul>\n<h3>The Anthropic SDK &amp; the Messages API</h3>\n<p>We will be using the <a href=\"https://docs.anthropic.com/claude/reference/client-sdks\">Anthropic python SDK</a> and the <a href=\"https://docs.anthropic.com/claude/reference/messages_post\">Messages API</a> throughout this tutorial. </p>\n<p>Below is an example of what running a prompt will look like in this tutorial. First, we create <code>get_completion</code>, which is a helper function that sends a prompt to Claude and returns Claude's generated response. Run that cell now.</p>"
+          "content": "<hr />\n<h2>Kullanım Notları ve İpuçları 💡</h2>\n<ul>\n<li>\n<p>Bu kursta sıcaklık 0 olan Claude 3 Haiku kullanılmaktadır. Sıcaklık hakkında daha sonra kursta konuşacağız. Şimdilik bu ayarların daha deterministik sonuçlar verdiğini anlamanız yeterli. Bu kurstaki tüm prompt mühendisliği teknikleri aynı zamanda Claude 2 ve Claude Instant 1.2 gibi önceki nesil eski Claude modelleri için de geçerlidir.</p>\n</li>\n<li>\n<p>Hücreyi yürütmek ve bir sonraki hücreye geçmek için <code>Shift + Enter</code>'i kullanabilirsiniz.</p>\n</li>\n<li>\n<p>Bir eğitim sayfasının en altına ulaştığınızda, klasördeki bir sonraki numaralı dosyaya veya o bölüm dosyasındaki içeriği tamamladıysanız bir sonraki numaralı klasöre gidin.</p>\n</li>\n</ul>\n<h3>Anthropic SDK ve Mesajlar API'si</h3>\n<p>Bu eğitim boyunca <a href=\"https://docs.anthropic.com/claude/reference/client-sdks\">Anthropic python SDK'sını</a> ve <a href=\"https://docs.anthropic.com/claude/reference/messages_post\">Messages API'sini</a> kullanacağız. </p>\n<p>Aşağıda bu eğitimde bir istem çalıştırmanın nasıl görüneceğine dair bir örnek verilmiştir. İlk olarak, Claude'a bir istem gönderen ve Claude'un oluşturduğu yanıtı döndüren yardımcı bir işlev olan <code>get_completion</code>'i oluşturuyoruz. Şimdi o hücreyi çalıştır.</p>"
         },
         {
           "type": "code",
@@ -110,7 +110,7 @@
         },
         {
           "type": "html",
-          "content": "<p>The <code>API_KEY</code> and <code>MODEL_NAME</code> variables defined earlier will be used throughout the tutorial. Just make sure to run the cells for each tutorial page from top to bottom.</p>"
+          "content": "<p>Daha önce tanımlanan <code>API_KEY</code> ve <code>MODEL_NAME</code> değişkenleri eğitim boyunca kullanılacaktır. Her eğitim sayfası için hücreleri yukarıdan aşağıya doğru çalıştırdığınızdan emin olun.</p>"
         }
       ]
     },
@@ -282,7 +282,7 @@
         },
         {
           "type": "html",
-          "content": "<hr />\n<h2>Lesson</h2>\n<p>Anthropic offers two APIs, the legacy <a href=\"https://docs.anthropic.com/claude/reference/complete_post\">Text Completions API</a> and the current <a href=\"https://docs.anthropic.com/claude/reference/messages_post\">Messages API</a>. For this tutorial, we will be exclusively using the Messages API.</p>\n<p>At minimum, a call to Claude using the Messages API requires the following parameters:</p>\n<ul>\n<li>\n<p><code>model</code>: the <a href=\"https://docs.anthropic.com/claude/docs/models-overview#model-recommendations\">API model name</a> of the model that you intend to call</p>\n</li>\n<li>\n<p><code>max_tokens</code>: the maximum number of tokens to generate before stopping. Note that Claude may stop before reaching this maximum. This parameter only specifies the absolute maximum number of tokens to generate. Furthermore, this is a <em>hard</em> stop, meaning that it may cause Claude to stop generating mid-word or mid-sentence.</p>\n</li>\n<li>\n<p><code>messages</code>: an array of input messages. Our models are trained to operate on alternating <code>user</code> and <code>assistant</code> conversational turns. When creating a new <code>Message</code>, you specify the prior conversational turns with the messages parameter, and the model then generates the next <code>Message</code> in the conversation.</p>\n</li>\n<li>Each input message must be an object with a <code>role</code> and <code>content</code>. You can specify a single <code>user</code>-role message, or you can include multiple <code>user</code> and <code>assistant</code> messages (they must alternate, if so). The first message must always use the <code>user</code> role.</li>\n</ul>\n<p>There are also optional parameters, such as:</p>\n<ul>\n<li>\n<p><code>system</code>: the system prompt - more on this below.</p>\n</li>\n<li>\n<p><code>temperature</code>: the degree of variability in Claude's response. For these lessons and exercises, we have set <code>temperature</code> to 0.</p>\n</li>\n</ul>\n<p>For a complete list of all API parameters, visit our <a href=\"https://docs.anthropic.com/claude/reference/messages_post\">API documentation</a>.</p>"
+          "content": "<hr />\n<h2>Ders</h2>\n<p>Anthropic, eski <a href=\"https://docs.anthropic.com/claude/reference/complete_post\">Metin Tamamlama API'si</a> ve mevcut <a href=\"https://docs.anthropic.com/claude/reference/messages_post\">Mesajlar API'si</a> olmak üzere iki API sunar. Bu eğitim için yalnızca Mesajlar API'sini kullanacağız.</p>\n<p>En azından, Mesajlar API'sini kullanarak Claude'a yapılan bir çağrı aşağıdaki parametreleri gerektirir:<br />\n- <code>model</code>: çağırmayı düşündüğünüz modelin <a href=\"https://docs.anthropic.com/claude/docs/models-overview#model-recommendations\">API model adı</a></p>\n<ul>\n<li>\n<p><code>max_tokens</code>: durmadan önce oluşturulacak maksimum jeton sayısı. Claude'un bu maksimuma ulaşmadan durabileceğini unutmayın. Bu parametre yalnızca üretilecek mutlak maksimum jeton sayısını belirtir. Üstelik bu <em>zor</em> bir duraktır, yani Claude'un kelime ortası veya cümle ortası oluşturmayı durdurmasına neden olabilir.</p>\n</li>\n<li>\n<p><code>messages</code>: bir dizi giriş mesajı. Modellerimiz, dönüşümlü <code>user</code> ve <code>assistant</code> konuşma dönüşlerinde çalışacak şekilde eğitilmiştir. Yeni bir <code>Message</code> oluştururken, önceki konuşma sıralarını message parametresiyle belirtirsiniz ve model daha sonra konuşmada bir sonraki <code>Message</code>'i oluşturur.</p>\n</li>\n<li>Her giriş mesajı <code>role</code> ve <code>content</code>'e sahip bir nesne olmalıdır. Tek bir <code>user</code> rol mesajı belirtebilir veya birden fazla <code>user</code> ve <code>assistant</code> mesajı ekleyebilirsiniz (eğer öyleyse, bunlar dönüşümlü olmalıdır). İlk mesaj her zaman <code>user</code> rolünü kullanmalıdır.</li>\n</ul>\n<p>Ayrıca aşağıdakiler gibi isteğe bağlı parametreler de vardır:<br />\n- <code>system</code>: sistem istemi - bununla ilgili daha fazla bilgi aşağıdadır.</p>\n<ul>\n<li><code>temperature</code>: Claude'un yanıtındaki değişkenlik derecesi. Bu dersler ve alıştırmalar için <code>temperature</code>'i 0 olarak ayarladık.</li>\n</ul>\n<p>Tüm API parametrelerinin tam listesi için <a href=\"https://docs.anthropic.com/claude/reference/messages_post\">API belgelerimizi</a> ziyaret edin.</p>"
         },
         {
           "type": "html",
@@ -580,7 +580,7 @@
         },
         {
           "type": "html",
-          "content": "<hr />\n<h2>Lesson</h2>\n<p><strong>Claude responds best to clear and direct instructions.</strong></p>\n<p>Think of Claude like any other human that is new to the job. <strong>Claude has no context</strong> on what to do aside from what you literally tell it. Just as when you instruct a human for the first time on a task, the more you explain exactly what you want in a straightforward manner to Claude, the better and more accurate Claude's response will be.\"              </p>\n<p>When in doubt, follow the <strong>Golden Rule of Clear Prompting</strong>:</p>\n<ul>\n<li>Show your prompt to a colleague or friend and have them follow the instructions themselves to see if they can produce the result you want. If they're confused, Claude's confused.</li>\n</ul>"
+          "content": "<hr />\n<h2>Ders</h2>\n<p><strong>Claude açık ve doğrudan talimatlara en iyi şekilde yanıt verir.</strong></p>\n<p>Claude'u bu işe yeni başlayan herhangi bir insan gibi düşünün. <strong>Claude'un tam anlamıyla söylediklerinizin dışında ne yapılacağına dair hiçbir bağlamı yok</strong>. Tıpkı bir insana ilk kez bir görev öğrettiğinizde, Claude'a tam olarak ne istediğinizi ne kadar açık bir şekilde açıklarsanız, Claude'un tepkisi de o kadar iyi ve doğru olacaktır.\"              </p>\n<p>Şüpheye düştüğünüzde <strong>Açık Uyarıda Bulunmanın Altın Kuralını</strong> izleyin:<br />\n- Yönergenizi bir meslektaşınıza veya arkadaşınıza gösterin ve onların da sizin istediğiniz sonucu üretip üretemeyeceklerini görmek için talimatları takip etmelerini sağlayın. Eğer kafaları karışırsa Claude'un da kafası karışır.</p>"
         },
         {
           "type": "html",
@@ -840,7 +840,7 @@
         },
         {
           "type": "html",
-          "content": "<h3>Examples</h3>\n<p>In the example below, we see that without role prompting, Claude provides a <strong>straightforward and non-stylized answer</strong> when asked to give a single sentence perspective on skateboarding.</p>\n<p>However, when we prime Claude to inhabit the role of a cat, Claude's perspective changes, and thus <strong>Claude's response tone, style, content adapts to the new role</strong>. </p>\n<p><strong>Note:</strong> A bonus technique you can use is to <strong>provide Claude context on its intended audience</strong>. Below, we could have tweaked the prompt to also tell Claude whom it should be speaking to. \"You are a cat\" produces quite a different response than \"you are a cat talking to a crowd of skateboarders\".</p>\n<p>Here is the prompt without role prompting in the system prompt:</p>"
+          "content": "<h3>Örnekler</h3>\n<p>Aşağıdaki örnekte, Claude'un kaykay hakkında tek cümlelik bir bakış açısı sunması istendiğinde rol yönlendirmesi olmadan <strong>basit ve stilize olmayan bir yanıt</strong> verdiğini görüyoruz.</p>\n<p>Ancak Claude'u kedi rolünü üstlenmeye hazırladığımızda Claude'un bakış açısı değişir ve böylece <strong>Claude'un tepki tonu, tarzı ve içeriği yeni role uyum sağlar</strong>. </p>\n<p><strong>Not:</strong> Kullanabileceğiniz bonus tekniklerden biri <strong>Claude'un hedef kitlesine ilişkin bağlamı sağlamaktır</strong>. Aşağıda, Claude'a kiminle konuşması gerektiğini de söyleyecek şekilde prompt'ta ince ayar yapabilirdik. \"Sen bir kedisin\", \"sen bir kaykaycı kalabalığıyla konuşan bir kedisin\" ifadesinden oldukça farklı bir tepki üretiyor.</p>\n<p>Sistem isteminde rol istemi olmayan istem aşağıdadır:</p>"
         },
         {
           "type": "code",
@@ -1441,7 +1441,7 @@
         },
         {
           "type": "html",
-          "content": "<p>Why is this something we'd want to do? Well, having the output in <strong>XML tags allows the end user to reliably get the poem and only the poem by writing a short program to extract the content between XML tags</strong>.</p>\n<p>An extension of this technique is to <strong>put the first XML tag in the <code>assistant</code> turn</strong>. When you put text in the <code>assistant</code> turn, you're basically telling Claude that Claude has already said something, and that it should continue from that point onward. This technique is called \"speaking for Claude\" or \"prefilling Claude's response.\"</p>\n<p>Below, we've done this with the first <code>&lt;haiku&gt;</code> XML tag. Notice how Claude continues directly from where we left off.</p>"
+          "content": "<p>Bu neden yapmak isteyeceğimiz bir şey? Çıktının <strong>XML etiketlerinde olması, son kullanıcının XML etiketleri arasındaki içeriği çıkarmak için kısa bir program yazarak şiiri ve yalnızca şiiri güvenilir bir şekilde elde etmesine olanak tanır</strong>.</p>\n<p>Bu tekniğin bir uzantısı <strong>ilk XML etiketini <code>assistant</code> sırasına koymak</strong>tır. <code>assistant</code> sırasına metin koyduğunuzda, temel olarak Claude'a Claude'un zaten bir şey söylediğini ve bunun o noktadan itibaren devam etmesi gerektiğini söylüyorsunuz. Bu tekniğe \"Claude adına konuşmak\" veya \"Claude'un cevabını önceden doldurmak\" denir.</p>\n<p>Aşağıda bunu ilk <code>&lt;haiku&gt;</code> XML etiketiyle yaptık. Claude'un kaldığımız yerden nasıl devam ettiğine dikkat edin.</p>"
         },
         {
           "type": "code",
@@ -1782,7 +1782,7 @@
         },
         {
           "type": "html",
-          "content": "<h3>Exercise 6.1 - Classifying Emails</h3>\n<p>In this exercise, we'll be instructing Claude to sort emails into the following categories:                                     </p>\n<ul>\n<li>(A) Pre-sale question</li>\n<li>(B) Broken or defective item</li>\n<li>(C) Billing question</li>\n<li>(D) Other (please explain)</li>\n</ul>\n<p>For the first part of the exercise, change the <code>PROMPT</code> to <strong>make Claude output the correct classification and ONLY the classification</strong>. Your answer needs to <strong>include the letter (A - D) of the correct choice, with the parentheses, as well as the name of the category</strong>.</p>\n<p>Refer to the comments beside each email in the <code>EMAILS</code> list to know which category that email should be classified under.</p>"
+          "content": "<h3>Alıştırma 6.1 - E-postaları Sınıflandırma</h3>\n<p>Bu alıştırmada Claude'a e-postaları aşağıdaki kategorilere ayırması talimatını vereceğiz:                                     <br />\n- (A) Satış öncesi soru<br />\n- (B) Kırık veya kusurlu ürün<br />\n- (C) Faturalandırma sorusu<br />\n- (D) Diğer (lütfen açıklayınız)</p>\n<p>Alıştırmanın ilk bölümünde, <code>PROMPT</code>'i <strong>Claude'un doğru sınıflandırmayı ve YALNIZCA sınıflandırmayı çıkarmasını sağlayın</strong> olarak değiştirin. Cevabınız <strong>kategorinin adının yanı sıra parantezlerle birlikte doğru seçeneğin harfini (A - D) içermelidir</strong>.</p>\n<p>Bir e-postanın hangi kategoride sınıflandırılması gerektiğini öğrenmek için <code>EMAILS</code> listesindeki her e-postanın yanındaki yorumlara bakın.</p>"
         },
         {
           "type": "code",
@@ -1981,7 +1981,7 @@
         },
         {
           "type": "html",
-          "content": "<hr />\n<h2>Lesson</h2>\n<p><strong>Giving Claude examples of how you want it to behave (or how you want it not to behave) is extremely effective</strong> for:</p>\n<ul>\n<li>Getting the right answer</li>\n<li>Getting the answer in the right format</li>\n</ul>\n<p>This sort of prompting is also called \"<strong>few shot prompting</strong>\". You might also encounter the phrase \"zero-shot\" or \"n-shot\" or \"one-shot\". The number of \"shots\" refers to how many examples are used within the prompt.</p>"
+          "content": "<hr />\n<h2>Ders</h2>\n<p><strong>Claude'a nasıl davranmasını istediğinize (veya nasıl davranmamasını istediğinize) dair örnekler vermek son derece etkilidir</strong>:<br />\n- Doğru cevabı almak<br />\n- Cevabı doğru formatta almak</p>\n<p>Bu tür yönlendirmeye \"<strong>birkaç atışlık yönlendirme</strong>\" de denir. Ayrıca \"sıfır atış\", \"n-atış\" veya \"tek atış\" ifadeleriyle de karşılaşabilirsiniz. \"Çekim\" sayısı, prompt'ta kaç örneğin kullanıldığını belirtir.</p>"
         },
         {
           "type": "html",
@@ -2020,7 +2020,7 @@
         },
         {
           "type": "html",
-          "content": "<h3>Exercise 7.1 - Email Formatting via Examples</h3>\n<p>We're going to redo Exercise 6.2, but this time, we're going to edit the <code>PROMPT</code> to use \"few-shot\" examples of emails + proper classification (and formatting) to get Claude to output the correct answer. We want the <em>last</em> letter of Claude's output to be the letter of the category.</p>\n<p>Refer to the comments beside each email in the <code>EMAILS</code> list if you forget which letter category is correct for each email.</p>\n<p>Remember that these are the categories for the emails:                                      </p>\n<ul>\n<li>(A) Pre-sale question</li>\n<li>(B) Broken or defective item</li>\n<li>(C) Billing question</li>\n<li>(D) Other (please explain)</li>\n</ul>"
+          "content": "<h3>Alıştırma 7.1 - Örneklerle E-posta Biçimlendirmesi</h3>\n<p>Alıştırma 6.2'yi yeniden yapacağız, ancak bu kez, Claude'un doğru yanıtı vermesini sağlamak için <code>PROMPT</code>'i \"birkaç çekimlik\" e-posta örnekleri + uygun sınıflandırma (ve biçimlendirme) kullanacak şekilde düzenleyeceğiz. Claude'un çıktısının <em>son</em> harfinin kategorinin harfi olmasını istiyoruz.</p>\n<p>Her e-posta için hangi harf kategorisinin doğru olduğunu unutursanız <code>EMAILS</code> listesindeki her e-postanın yanındaki yorumlara bakın.</p>\n<p>Bunların e-posta kategorileri olduğunu unutmayın:                                     <br />\n- (A) Satış öncesi soru<br />\n- (B) Kırık veya kusurlu ürün<br />\n- (C) Faturalandırma sorusu<br />\n- (D) Diğer (lütfen açıklayınız)</p>"
         },
         {
           "type": "code",
@@ -2214,7 +2214,7 @@
         },
         {
           "type": "html",
-          "content": "<hr />\n<h2>Lesson</h2>\n<p>Some bad news: <strong>Claude sometimes \"hallucinates\" and makes claims that are untrue or unjustified</strong>. The good news: there are techniques you can use to minimize hallucinations.</p>\n<p>Below, we'll go over a few of these techniques, namely:</p>\n<ul>\n<li>Giving Claude the option to say it doesn't know the answer to a question</li>\n<li>Asking Claude to find evidence before answering</li>\n</ul>\n<p>However, <strong>there are many methods to avoid hallucinations</strong>, including many of the techniques you've already learned in this course. If Claude hallucinates, experiment with multiple techniques to get Claude to increase its accuracy.</p>"
+          "content": "<hr />\n<h2>Ders</h2>\n<p>Bazı kötü haberler: <strong>Claude bazen \"halüsinasyon görüyor\" ve doğru olmayan veya haksız iddialarda bulunuyor</strong>. İyi haber: Halüsinasyonları en aza indirmek için kullanabileceğiniz teknikler var.</p>\n<p>Aşağıda bu tekniklerden birkaçını ele alacağız:<br />\n- Claude'a bir sorunun cevabını bilmediğini söyleme seçeneği vermek<br />\n- Claude'dan cevap vermeden önce kanıt bulmasını istemek</p>\n<p>Ancak <strong>halüsinasyonlardan kaçınmanın birçok yöntemi vardır</strong>; bu kursta öğrendiğiniz tekniklerin çoğu da buna dahildir. Claude halüsinasyon görürse, Claude'un doğruluğunu artırmasını sağlamak için birden fazla teknik deneyin.</p>"
         },
         {
           "type": "html",
@@ -2487,7 +2487,7 @@
         },
         {
           "type": "html",
-          "content": "<h3>Example - Legal Services</h3>\n<p><strong>Prompts within the legal profession can be quite complex</strong> due to the need to:</p>\n<ul>\n<li>Parse long documents</li>\n<li>Deal with complex topics</li>\n<li>Format output in very specific ways</li>\n<li>Follow multi-step analytical processes</li>\n</ul>\n<p>Let's see how we can use the complex prompt template to structure a prompt for a specific legal use-case. Below, we've detailed out an example prompt for a legal use-case wherein we ask Claude to answer questions about a legal issue using information from a legal document.</p>\n<p>We've <strong>changed around the ordering of a few elements</strong> to showcase that prompt structure can be flexible!</p>\n<p><strong>Prompt engineering is about scientific trial and error</strong>. We encourage you to mix and match, move things around (the elements where ordering doesn't matter), and see what works best for you and your needs.</p>"
+          "content": "<h3>Örnek - Yasal Hizmetler</h3>\n<p><strong>Hukuk mesleğindeki talepler aşağıdaki ihtiyaçlardan dolayı oldukça karmaşık olabilir</strong>:<br />\n- Uzun belgeleri ayrıştırın<br />\n- Karmaşık konularla ilgilenin<br />\n- Çıktıyı çok özel şekillerde biçimlendirin<br />\n- Çok adımlı analitik süreçleri takip edin</p>\n<p>Belirli bir yasal kullanım durumuna yönelik bir prompt yapılandırmak için karmaşık prompt şablonunu nasıl kullanabileceğimizi görelim. Aşağıda, Claude'dan yasal bir belgedeki bilgileri kullanarak yasal bir sorunla ilgili soruları yanıtlamasını istediğimiz, yasal bir kullanım senaryosu için örnek bir istemi ayrıntılı olarak açıkladık.</p>\n<p>Hızlı yapının esnek olabileceğini göstermek için <strong>birkaç öğenin sıralamasında değişiklik yaptık</strong>!</p>\n<p><strong>Prompt mühendisliği bilimsel deneme yanılma ile ilgilidir</strong>. Karıştırıp eşleştirmenizi, eşyaların yerini değiştirmenizi (sıralamanın önemli olmadığı öğeler) ve sizin ve ihtiyaçlarınız için en iyi neyin işe yaradığını görmenizi öneririz.</p>"
         },
         {
           "type": "code",
@@ -2549,7 +2549,7 @@
         },
         {
           "type": "html",
-          "content": "<hr />\n<h2>Congratulations &amp; Next Steps!</h2>\n<p>If you made it through all the exercises, <strong>you are now in the top 0.1% of LLM whisperers</strong>. One of the elite!</p>\n<p>The techniques you've learned, from thinking step by step to assigning roles to using examples to general all-around clear writing, can be <strong>merged, remixed, and adapted in countless ways</strong>.</p>\n<p>Prompt engineering is a very new discipline, so keep an open mind. You could be the one to discover the next great prompting trick.</p>\n<p>If you want to see <strong>more examples of good prompts</strong> for inspiration:                   </p>\n<ul>\n<li>Learn from examples of production-ready prompts from our <a href=\"https://anthropic.com/cookbook\">cookbook</a></li>\n<li>Read through our <a href=\"https://docs.anthropic.com/claude/docs/prompt-engineering\">prompting guide</a></li>\n<li>Check out our <a href=\"https://anthropic.com/prompts\">prompt library</a> for inspiration</li>\n<li>Try our experimental <a href=\"https://docs.anthropic.com/claude/docs/helper-metaprompt-experimental\">metaprompt</a> to get Claude to write prompt templates for you!</li>\n<li>Ask questions in our <a href=\"https://anthropic.com/discord\">discord server</a></li>\n<li>Learn about the <a href=\"https://docs.anthropic.com/claude/reference/complete_post\">Anthropic API parameters</a> like temperature and <code>max_tokens</code></li>\n<li>If you're feeling academic, read some <a href=\"https://www.promptingguide.ai/papers\">papers</a> on prompt engineering</li>\n<li>Practice building prompts to get Claude to do something you're interested in</li>\n</ul>\n<p>If you want to learn about some truly advanced prompting techniques beyond the scope of this tutorial, click through to the appendix! But first, run the cell below.</p>"
+          "content": "<hr />\n<h2>Tebrikler ve Sonraki Adımlar!</h2>\n<p>Tüm alıştırmaları tamamladıysanız, <strong>şu anda LLM'ye fısıldayanlar arasında ilk %0,1'lik dilimdesinizdir</strong>. Seçkinlerden biri!</p>\n<p>Adım adım düşünmekten rol atamaya, örnekler kullanmaya ve genel olarak her yönüyle net yazmaya kadar öğrendiğiniz teknikler <strong>sayısız şekilde birleştirilebilir, yeniden karıştırılabilir ve uyarlanabilir</strong>.</p>\n<p>Prompt mühendisliği çok yeni bir disiplindir, bu yüzden açık fikirli olun. Bir sonraki harika yönlendirme numarasını keşfeden kişi siz olabilirsiniz.</p>\n<p>İlham almak için <strong>daha fazla iyi ipucu örneği</strong> görmek istiyorsanız:                 <br />\n- <a href=\"https://anthropic.com/cookbook\">Yemek kitabımızdan</a> üretime hazır istem örneklerinden bilgi edinin<br />\n- <a href=\"https://docs.anthropic.com/claude/docs/prompt-engineering\">Yönlendirme kılavuzumuzu</a> okuyun<br />\n- İlham almak için <a href=\"https://anthropic.com/prompts\">prompt kitaplığımıza</a> göz atın<br />\n- Claude'un sizin için prompt şablonları yazmasını sağlamak için deneysel <a href=\"https://docs.anthropic.com/claude/docs/helper-metaprompt-experimental\">metaprompt</a> yöntemimizi deneyin!<br />\n- Sorularınızı <a href=\"https://anthropic.com/discord\">discord sunucumuzda</a> sorun<br />\n- Sıcaklık ve <code>max_tokens</code> gibi <a href=\"https://docs.anthropic.com/claude/reference/complete_post\">Anthropic API parametreleri</a> hakkında bilgi edinin<br />\n- Kendinizi akademik hissediyorsanız, hızlı mühendislikle ilgili bazı <a href=\"https://www.promptingguide.ai/papers\">makaleleri</a> okuyun<br />\n- Claude'un ilgilendiğiniz bir şeyi yapmasını sağlamak için istem oluşturma alıştırması yapın</p>\n<p>Bu eğitimin kapsamı dışında gerçekten gelişmiş bazı yönlendirme teknikleri hakkında bilgi edinmek istiyorsanız, eke tıklayın! Ama önce aşağıdaki hücreyi çalıştırın.</p>"
         },
         {
           "type": "code",
@@ -3077,11 +3077,11 @@
         },
         {
           "type": "html",
-          "content": "<hr />\n<h2>Lesson</h2>\n<p>While it might seem conceptually complex at first, tool use, a.k.a. function calling, is actually quite simple! You already know all the skills necessary to implement tool use, which is really just a combination of substitution and prompt chaining.</p>\n<p>In previous substitution exercises, we substituted text into prompts. With tool use, we substitute tool or function results into prompts. Claude can't literally call or access tools and functions. Instead, we have Claude:</p>\n<ol>\n<li>Output the tool name and arguments it wants to call</li>\n<li>Halt any further response generation while the tool is called</li>\n<li>Then we reprompt with the appended tool results</li>\n</ol>"
+          "content": "<hr />\n<h2>Ders</h2>\n<p>İlk bakışta kavramsal olarak karmaşık görünse de, araç kullanımı, diğer bir deyişle işlev çağırma aslında oldukça basittir! Araç kullanımını uygulamak için gerekli tüm becerileri zaten biliyorsunuz; bu aslında sadece ikame ve hızlı zincirlemenin bir birleşimidir.</p>\n<p>Önceki ikame alıştırmalarında, metinleri istemlerin yerine koyduk. Araç kullanımıyla, araç veya işlev sonuçlarını istemlere dönüştürürüz. Claude araçları ve işlevleri tam anlamıyla arayamaz veya bunlara erişemez. Bunun yerine Claude'umuz var:<br />\n1. Çağırmak istediği araç adını ve bağımsız değişkenleri çıktılayın<br />\n2. Araç çağrılırken daha fazla yanıt oluşturulmasını durdurun<br />\n3. Daha sonra ekteki araç sonuçlarını yeniden soruyoruz</p>"
         },
         {
           "type": "html",
-          "content": "<p>Function calling is useful because it expands Claude's capabilities and enables Claude to handle much more complex, multi-step tasks.\nSome examples of functions you can give Claude:</p>\n<ul>\n<li>Calculator</li>\n<li>Word counter</li>\n<li>SQL database querying and data retrieval</li>\n<li>Weather API</li>\n</ul>"
+          "content": "<p>İşlev çağırma, Claude'un yeteneklerini genişlettiği ve Claude'un çok daha karmaşık, çok adımlı görevleri yerine getirmesini sağladığı için faydalıdır.<br />\nClaude'a verebileceğiniz bazı fonksiyon örnekleri:<br />\n- Hesap Makinesi<br />\n- Kelime sayacı<br />\n- SQL veritabanı sorgulama ve veri alma<br />\n- Hava Durumu API'sı</p>"
         },
         {
           "type": "html",
@@ -3089,11 +3089,11 @@
         },
         {
           "type": "html",
-          "content": "<h3>Tool use roadmap</h3>\n<p><em>This lesson teaches our current tool use format. However, we will be updating and improving tool use functionality in the near future, including:</em></p>\n<ul>\n<li><em>A more streamlined format for function definitions and calls</em></li>\n<li><em>More robust error handling and edge case coverage</em></li>\n<li><em>Tighter integration with the rest of our API</em></li>\n<li><em>Better reliability and performance, especially for more complex tool use tasks</em></li>\n</ul>"
+          "content": "<h3>Araç kullanımı yol haritası</h3>\n<p><em>Bu ders mevcut araç kullanım formatımızı öğretir. Ancak yakın gelecekte araç kullanım işlevselliğini aşağıdakiler dahil olmak üzere güncelleyip iyileştireceğiz:</em><br />\n* <em>İşlev tanımları ve çağrıları için daha akıcı bir format</em><br />\n* <em>Daha sağlam hata işleme ve uç durum kapsamı</em><br />\n* <em>API'mizin geri kalanıyla daha sıkı entegrasyon</em><br />\n* <em>Özellikle daha karmaşık araç kullanımı görevleri için daha iyi güvenilirlik ve performans</em></p>"
         },
         {
           "type": "html",
-          "content": "<h3>Examples</h3>\n<p>To enable tool use in Claude, we start with the system prompt. In this special tool use system prompt, wet tell Claude:</p>\n<ul>\n<li>The basic premise of tool use and what it entails</li>\n<li>How Claude can call and use the tools it's been given</li>\n<li>A detailed list of tools it has access to in this specific scenario </li>\n</ul>\n<p>Here's the first part of the system prompt, explaining tool use to Claude. This part of the system prompt is generalizable across all instances of prompting Claude for tool use. The tool calling structure we're giving Claude (<code>&lt;function_calls&gt; [...] &lt;/function_calls&gt;</code>) is a structure Claude has been specifically trained to use, so we recommend that you stick with this.</p>"
+          "content": "<h3>Örnekler</h3>\n<p>Claude'da araç kullanımını etkinleştirmek için sistem istemiyle başlıyoruz. Bu özel alet kullanım sistemi isteminde Claude'a şunu söyleyin:<br />\n* Alet kullanımının temel dayanağı ve neleri gerektirdiği<br />\n* Claude kendisine verilen araçları nasıl arayabilir ve kullanabilir?<br />\n* Bu özel senaryoda erişebildiği araçların ayrıntılı listesi </p>\n<p>İşte sistem isteminin Claude'a araç kullanımını açıklayan ilk kısmı. Sistem isteminin bu kısmı, Claude'u araç kullanımı için yönlendirmenin tüm örneklerine genelleştirilebilir. Claude'a verdiğimiz araç çağırma yapısı (<code>&lt;function_calls&gt; [...] &lt;/function_calls&gt;</code>), Claude'un kullanmak üzere özel olarak eğitildiği bir yapıdır, dolayısıyla buna bağlı kalmanızı öneririz.</p>"
         },
         {
           "type": "code",
@@ -3294,5 +3294,5 @@
     }
   ],
   "source_url": "https://github.com/anthropics/courses/tree/master/prompt_engineering_interactive_tutorial/Anthropic%201P",
-  "last_synced_at": "2026-03-28T12:46:29.573451+00:00"
+  "last_synced_at": "2026-03-30T13:59:39.382394+00:00"
 }
