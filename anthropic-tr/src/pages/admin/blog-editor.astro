@@ -115,6 +115,7 @@ const postId = Astro.url.searchParams.get('id') ?? '';
     let blocks: any[] = [];
     let postStatus = 'draft';
     let currentPostId: string | null = postId;
+    let publishedAt: string | null = null;
     let autosaveTimer: ReturnType<typeof setTimeout> | null = null;
 
     // --- Utils ---
@@ -279,8 +280,8 @@ const postId = Astro.url.searchParams.get('id') ?? '';
         status,
       };
 
-      if (status === 'published' && !currentPostId) {
-        payload.published_at = new Date().toISOString();
+      if (status === 'published') {
+        payload.published_at = publishedAt ?? new Date().toISOString();
       }
 
       const resp = await fetch('/api/posts', {
@@ -292,6 +293,7 @@ const postId = Astro.url.searchParams.get('id') ?? '';
       if (resp.ok) {
         const data = await resp.json();
         currentPostId = data.id;
+        publishedAt = data.published_at || publishedAt;
         document.getElementById('autosave-status')!.textContent = 'Kaydedildi ✓';
         if (!isAuto) showToast(status === 'published' ? 'Yazı yayınlandı! 🎉' : 'Taslak kaydedildi.');
         setTimeout(() => { document.getElementById('autosave-status')!.textContent = ''; }, 3000);
@@ -339,6 +341,7 @@ const postId = Astro.url.searchParams.get('id') ?? '';
         (document.getElementById('seo_title') as HTMLInputElement).value = post.seo_title || '';
         (document.getElementById('seo_description') as HTMLTextAreaElement).value = post.seo_description || '';
         document.getElementById('seo-count')!.textContent = (post.seo_description || '').length + '/160';
+        publishedAt = post.published_at || null;
         blocks = post.content ?? [];
         setStatus(post.status || 'draft');
         renderBlocks();

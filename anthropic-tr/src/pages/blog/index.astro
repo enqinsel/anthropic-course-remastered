@@ -1,8 +1,11 @@
 ---
+export const prerender = false;
+
 import BaseLayout from '../../components/layout/BaseLayout.astro';
 import Card from '../../components/ui/Card.astro';
 import AdBanner from '../../components/ads/AdBanner.astro';
 import { supabase } from '../../lib/supabase';
+import { getPostDisplayDate, sortPostsByRecency, type PostListItem } from '../../lib/posts';
 
 const page = parseInt(Astro.url.searchParams.get('page') ?? '1');
 const tag = Astro.url.searchParams.get('tag') ?? '';
@@ -11,15 +14,15 @@ const from = (page - 1) * pageSize;
 
 let query = supabase
   .from('posts')
-  .select('title, slug, excerpt, cover_image, tags, published_at', { count: 'exact' })
-  .eq('status', 'published')
-  .order('published_at', { ascending: false })
-  .range(from, from + pageSize - 1);
+  .select('title, slug, excerpt, cover_image, tags, published_at, created_at')
+  .eq('status', 'published');
 
 if (tag) query = query.contains('tags', [tag]);
 
-const { data: posts, count } = await query;
-const totalPages = Math.ceil((count ?? 0) / pageSize);
+const { data: postRows } = await query;
+const sortedPosts = sortPostsByRecency((postRows ?? []) as PostListItem[]);
+const posts = sortedPosts.slice(from, from + pageSize);
+const totalPages = Math.ceil(sortedPosts.length / pageSize);
 
 // Sidebar için tüm etiketler
 const { data: allPosts } = await supabase
@@ -51,7 +54,7 @@ const allTags = [...new Set((allPosts ?? []).flatMap(p => p.tags ?? []))].sort()
                   description={post.excerpt ?? undefined}
                   tags={post.tags}
                   image={post.cover_image ?? undefined}
-                  date={post.published_at ?? undefined}
+                  date={getPostDisplayDate(post)}
                 />
               ))}
             </div>

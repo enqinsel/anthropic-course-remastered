@@ -10,11 +10,27 @@ function getAdminClient() {
   );
 }
 
+function normalizePostPayload(
+  payload: Record<string, unknown>,
+  existingPublishedAt: string | null = null
+) {
+  const normalized = { ...payload };
+
+  if (normalized.status === 'published') {
+    normalized.published_at = normalized.published_at ?? existingPublishedAt ?? new Date().toISOString();
+  } else if (existingPublishedAt && normalized.published_at === undefined) {
+    normalized.published_at = existingPublishedAt;
+  }
+
+  return normalized;
+}
+
 export const POST: APIRoute = async ({ request }) => {
   const supabase = getAdminClient();
   const body = await request.json();
   const { id: _id, ...payload } = body; // id alanını at (yeni kayıt)
-  const { data, error } = await supabase.from('posts').insert(payload).select().single();
+  const normalizedPayload = normalizePostPayload(payload);
+  const { data, error } = await supabase.from('posts').insert(normalizedPayload).select().single();
   if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
   return new Response(JSON.stringify(data), { status: 200 });
 };
@@ -24,7 +40,18 @@ export const PUT: APIRoute = async ({ request }) => {
   const body = await request.json();
   const { id, ...rest } = body;
   if (!id) return new Response(JSON.stringify({ error: 'id zorunlu' }), { status: 400 });
-  const { data, error } = await supabase.from('posts').update(rest).eq('id', id).select().single();
+  const { data: existing, error: existingError } = await supabase
+    .from('posts')
+    .select('published_at')
+    .eq('id', id)
+    .single();
+
+  if (existingError) {
+    return new Response(JSON.stringify({ error: existingError.message }), { status: 400 });
+  }
+
+  const normalizedPayload = normalizePostPayload(rest, existing?.published_at ?? null);
+  const { data, error } = await supabase.from('posts').update(normalizedPayload).eq('id', id).select().single();
   if (error) return new Response(JSON.stringify({ error: error.message }), { status: 400 });
   return new Response(JSON.stringify(data), { status: 200 });
 };

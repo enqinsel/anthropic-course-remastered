@@ -5,6 +5,7 @@ import BaseLayout from '../../components/layout/BaseLayout.astro';
 import AdBanner from '../../components/ads/AdBanner.astro';
 import { supabase } from '../../lib/supabase';
 import type { ContentBlock } from '../../lib/types';
+import { getPostDisplayDate } from '../../lib/posts';
 
 const { slug } = Astro.params;
 
@@ -18,6 +19,7 @@ const { data: post } = await supabase
 if (!post) return Astro.redirect('/404');
 
 const blocks = post.content as ContentBlock[];
+const publishedDate = getPostDisplayDate(post);
 
 // Okuma süresi
 const wordCount = blocks
@@ -49,7 +51,7 @@ const schema = {
   "headline": post.title,
   "description": post.seo_description ?? post.excerpt,
   "image": post.cover_image,
-  "datePublished": post.published_at,
+  "datePublished": publishedDate,
   "dateModified": post.created_at,
   "author": { "@type": "Organization", "name": "Anthropic TR" },
   "publisher": {
@@ -96,8 +98,8 @@ const postUrl = `https://anthropic-tr.com/blog/${post.slug}`;
           <div class="flex flex-wrap items-center gap-4 text-xs text-muted">
             <span>Anthropic TR</span>
             <span>·</span>
-            <time datetime={post.published_at ?? ''}>
-              {new Date(post.published_at ?? post.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            <time datetime={publishedDate}>
+              {new Date(publishedDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}
             </time>
             <span>·</span>
             <span>{readingTime} dk okuma</span>

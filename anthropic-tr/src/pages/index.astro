@@ -1,5 +1,5 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import BaseLayout from '../components/layout/BaseLayout.astro';
 import Card from '../components/ui/Card.astro';
@@ -7,14 +7,16 @@ import AdBanner from '../components/ads/AdBanner.astro';
 import { supabase } from '../lib/supabase';
 import faqsData from '../content/faqs.json';
 import { getAllCourses, getCourseLandingHref } from '../lib/courseData';
+import { getPostDisplayDate, sortPostsByRecency, type PostListItem } from '../lib/posts';
 
 // Son 3 blog yazısını çek
-const { data: posts } = await supabase
+const { data: postRows } = await supabase
   .from('posts')
-  .select('title, slug, excerpt, cover_image, tags, published_at')
+  .select('title, slug, excerpt, cover_image, tags, published_at, created_at')
   .eq('status', 'published')
-  .order('published_at', { ascending: false })
-  .limit(3);
+  .limit(12);
+
+const posts = sortPostsByRecency((postRows ?? []) as PostListItem[]).slice(0, 3);
 
 // SSS önizleme — JSON dosyasından
 const faqs = faqsData.slice(0, 5);
@@ -111,7 +113,7 @@ const learningPath = [
             description={post.excerpt ?? undefined}
             tags={post.tags}
             image={post.cover_image ?? undefined}
-            date={post.published_at ?? undefined}
+            date={getPostDisplayDate(post)}
           />
         ))}
       </div>
