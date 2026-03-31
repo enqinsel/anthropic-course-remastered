@@ -91,40 +91,40 @@ const analyticsProvider = analyticsUrl?.toLowerCase().includes('plausible') ? 'p
     <script defer data-website-id={analyticsSiteId} src={analyticsUrl} />
   )}
 </head>
-<body>
+<body class="site-shell">
   <Header />
-  <main>
+  <main class="site-main">
     <slot />
   </main>
   <Footer />
   <script define:vars={{ analyticsProviderValue: analyticsProvider ?? '' }}>
     const analyticsProvider = analyticsProviderValue;
 
-    (window as any).trackEvent = (name: string, data: Record<string, string | number | boolean> = {}) => {
+    window.trackEvent = function (name, data = {}) {
       try {
-        if (analyticsProvider === 'plausible' && typeof (window as any).plausible === 'function') {
-          (window as any).plausible(name, Object.keys(data).length ? { props: data } : undefined);
+        if (analyticsProvider === 'plausible' && typeof window.plausible === 'function') {
+          window.plausible(name, Object.keys(data).length ? { props: data } : undefined);
           return;
         }
 
-        if (typeof (window as any).umami?.track === 'function') {
-          (window as any).umami.track(name, data);
+        if (window.umami && typeof window.umami.track === 'function') {
+          window.umami.track(name, data);
         }
       } catch {
         // no-op
       }
     };
 
-    const copyTimers = new WeakMap<HTMLButtonElement, number>();
+    const copyTimers = new WeakMap();
 
     document.addEventListener('click', async (event) => {
-      const target = event.target as HTMLElement | null;
-      const button = target?.closest<HTMLButtonElement>('.copy-btn');
+      const target = event.target instanceof Element ? event.target : null;
+      const button = target ? target.closest('.copy-btn') : null;
       if (!button) return;
 
       const directValue = button.dataset.copy;
       const targetSelector = button.dataset.copyTarget;
-      const sourceElement = targetSelector ? document.querySelector<HTMLElement>(targetSelector) : null;
+      const sourceElement = targetSelector ? document.querySelector(targetSelector) : null;
       const textToCopy = directValue
         ?? (sourceElement instanceof HTMLTextAreaElement || sourceElement instanceof HTMLInputElement
           ? sourceElement.value
@@ -142,7 +142,7 @@ const analyticsProvider = analyticsUrl?.toLowerCase().includes('plausible') ? 'p
       try {
         await navigator.clipboard.writeText(textToCopy);
         button.textContent = successLabel;
-        (window as any).trackEvent?.('code_copy', { kind: button.dataset.copyType || 'generic' });
+        window.trackEvent?.('code_copy', { kind: button.dataset.copyType || 'generic' });
       } catch {
         button.textContent = failureLabel;
       }

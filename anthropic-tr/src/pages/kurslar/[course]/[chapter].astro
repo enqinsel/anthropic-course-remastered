@@ -344,13 +344,14 @@ const schema = {
   const LANG_KEY = 'course-lang';
   const LIKE_KEY = 'likes';
 
-  function getLang(): 'tr' | 'en' {
-    return (localStorage.getItem(LANG_KEY) as 'tr' | 'en') ?? 'tr';
+  function getLang() {
+    const stored = localStorage.getItem(LANG_KEY);
+    return stored === 'en' ? 'en' : 'tr';
   }
 
-  function applyLang(lang: 'tr' | 'en') {
-    document.querySelectorAll<HTMLElement>('.lang-tr').forEach((element) => element.classList.toggle('hidden', lang !== 'tr'));
-    document.querySelectorAll<HTMLElement>('.lang-en').forEach((element) => element.classList.toggle('hidden', lang !== 'en'));
+  function applyLang(lang) {
+    document.querySelectorAll('.lang-tr').forEach((element) => element.classList.toggle('hidden', lang !== 'tr'));
+    document.querySelectorAll('.lang-en').forEach((element) => element.classList.toggle('hidden', lang !== 'en'));
     const btnTr = document.getElementById('lang-tr');
     const btnEn = document.getElementById('lang-en');
     const activeClass = 'text-xs px-3 py-1.5 rounded-md transition-colors bg-accent text-white';
@@ -363,14 +364,14 @@ const schema = {
   applyLang(getLang());
   document.getElementById('lang-tr')?.addEventListener('click', () => {
     applyLang('tr');
-    (window as any).trackEvent?.('lang_toggle', { lang: 'tr', course: courseSlug, chapter: chapterSlugValue });
+    window.trackEvent?.('lang_toggle', { lang: 'tr', course: courseSlug, chapter: chapterSlugValue });
   });
   document.getElementById('lang-en')?.addEventListener('click', () => {
     applyLang('en');
-    (window as any).trackEvent?.('lang_toggle', { lang: 'en', course: courseSlug, chapter: chapterSlugValue });
+    window.trackEvent?.('lang_toggle', { lang: 'en', course: courseSlug, chapter: chapterSlugValue });
   });
 
-  function getProgress(courseId: string): Set<string> {
+  function getProgress(courseId) {
     try {
       const raw = localStorage.getItem(`progress-${courseId}`);
       return new Set(raw ? JSON.parse(raw) : []);
@@ -379,45 +380,45 @@ const schema = {
     }
   }
 
-  function saveProgress(courseId: string, done: Set<string>) {
+  function saveProgress(courseId, done) {
     localStorage.setItem(`progress-${courseId}`, JSON.stringify([...done]));
   }
 
   function getLikes() {
     try {
-      return new Set<string>(JSON.parse(localStorage.getItem(LIKE_KEY) ?? '[]'));
+      return new Set(JSON.parse(localStorage.getItem(LIKE_KEY) ?? '[]'));
     } catch {
-      return new Set<string>();
+      return new Set();
     }
   }
 
-  function saveLikes(likes: Set<string>) {
+  function saveLikes(likes) {
     localStorage.setItem(LIKE_KEY, JSON.stringify([...likes]));
   }
 
-  function syncLikeButton(button: HTMLButtonElement, liked: boolean) {
-    const icon = button.querySelector<HTMLElement>('[data-like-icon]');
-    const label = button.querySelector<HTMLElement>('[data-like-label]');
+  function syncLikeButton(button, liked) {
+    const icon = button.querySelector('[data-like-icon]');
+    const label = button.querySelector('[data-like-label]');
     if (icon) icon.textContent = liked ? '♥' : '♡';
     if (label) label.textContent = liked ? 'Beğenildi' : 'Beğen';
     button.classList.toggle('text-accent-light', liked);
     button.classList.toggle('border-accent', liked);
   }
 
-  function updateUI(courseId: string, total: number) {
+  function updateUI(courseId, total) {
     const done = getProgress(courseId);
     const pct = total ? (done.size / total) * 100 : 0;
     const bar = document.getElementById('progress-bar');
     const txt = document.getElementById('progress-text');
     if (bar) bar.style.width = `${pct}%`;
     if (txt) txt.textContent = `${done.size} / ${total}`;
-    document.querySelectorAll<HTMLElement>('.chapter-link').forEach((link) => {
-      const check = link.querySelector<HTMLElement>('.done-check');
+    document.querySelectorAll('.chapter-link').forEach((link) => {
+      const check = link.querySelector('.done-check');
       if (check) check.classList.toggle('hidden', !done.has(link.dataset.chapterSlug ?? ''));
     });
   }
 
-  const button = document.getElementById('mark-done') as HTMLButtonElement | null;
+  const button = document.getElementById('mark-done');
   if (button) {
     const chapterSlug = button.dataset.chapterSlug ?? '';
     const courseId = button.dataset.courseId ?? '';
@@ -442,7 +443,7 @@ const schema = {
       }
       saveProgress(courseId, current);
       updateUI(courseId, total);
-      (window as any).trackEvent?.('chapter_complete', {
+      window.trackEvent?.('chapter_complete', {
         course: courseSlug,
         chapter: chapterSlug,
         completed: willComplete,
@@ -450,7 +451,7 @@ const schema = {
     });
   }
 
-  const likeButton = document.getElementById('chapter-like-btn') as HTMLButtonElement | null;
+  const likeButton = document.getElementById('chapter-like-btn');
   if (likeButton) {
     const id = likeButton.dataset.likeId ?? '';
     const likes = getLikes();
@@ -462,7 +463,7 @@ const schema = {
       else currentLikes.delete(id);
       saveLikes(currentLikes);
       syncLikeButton(likeButton, nextLiked);
-      (window as any).trackEvent?.('like', { slug: id, liked: nextLiked, surface: 'chapter' });
+      window.trackEvent?.('like', { slug: id, liked: nextLiked, surface: 'chapter' });
     });
   }
 </script>

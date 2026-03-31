@@ -41,12 +41,19 @@
   }
 
   body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     background:
       radial-gradient(circle at top right, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 28%),
       linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 28%, var(--color-site)) 0%, var(--color-site) 100%);
     color: var(--color-base);
     font-family: var(--font-sans);
     transition: background-color 220ms ease, color 220ms ease;
+  }
+
+  main {
+    flex: 1 0 auto;
   }
 
   h1 {
