@@ -18,7 +18,29 @@ const { data: post } = await supabase
 
 if (!post) return Astro.redirect('/404');
 
-const blocks = post.content as ContentBlock[];
+function hasRenderableContent(block: ContentBlock) {
+  if (block.type === 'divider') return true;
+  if (block.type === 'video') return Boolean(block.videoId?.trim());
+  if (block.type === 'image') return Boolean(block.url?.trim());
+  if (block.type === 'code') return Boolean(block.code?.trim());
+  if (block.type === 'link_card') return Boolean(block.href?.trim() || block.linkTitle?.trim());
+  if (block.type === 'quote') return Boolean(block.text?.trim() || block.source?.trim());
+  return Boolean(block.text?.trim());
+}
+
+function normalizeBlocks(content: ContentBlock[]) {
+  const visibleBlocks = content.filter(hasRenderableContent);
+
+  return visibleBlocks.filter((block, index) => {
+    if (block.type !== 'divider') return true;
+
+    const previous = visibleBlocks[index - 1];
+    const next = visibleBlocks[index + 1];
+    return Boolean(previous && next && previous.type !== 'divider' && next.type !== 'divider');
+  });
+}
+
+const blocks = normalizeBlocks(post.content as ContentBlock[]);
 const publishedDate = getPostDisplayDate(post);
 
 // Okuma süresi
@@ -114,7 +136,10 @@ const postUrl = `https://anthropic-tr.com/blog/${post.slug}`;
               Twitter/X'te Paylaş
             </a>
             <button
-              onclick={`navigator.clipboard.writeText('${postUrl}').then(() => alert('Link kopyalandı!'))`}
+              id="copy-link-btn"
+              type="button"
+              data-url={postUrl}
+              data-default-label="Linki Kopyala"
               class="text-xs border border-border rounded-lg px-3 py-1.5 text-muted hover:border-accent transition-colors cursor-pointer bg-transparent"
             >
               Linki Kopyala
@@ -226,4 +251,28 @@ const postUrl = `https://anthropic-tr.com/blog/${post.slug}`;
       </aside>
     </div>
   </div>
+
+  <script>
+    const copyLinkButton = document.getElementById('copy-link-btn');
+    let copyResetTimer: number | undefined;
+
+    copyLinkButton?.addEventListener('click', async () => {
+      const button = copyLinkButton as HTMLButtonElement;
+      const defaultLabel = button.dataset.defaultLabel || 'Linki Kopyala';
+
+      try {
+        await navigator.clipboard.writeText(button.dataset.url || window.location.href);
+        button.textContent = 'Kopyalandı';
+      } catch {
+        button.textContent = 'Kopyalanamadı';
+      }
+
+      button.disabled = true;
+      window.clearTimeout(copyResetTimer);
+      copyResetTimer = window.setTimeout(() => {
+        button.textContent = defaultLabel;
+        button.disabled = false;
+      }, 1600);
+    });
+  </script>
 </BaseLayout>
