@@ -944,6 +944,7 @@ def extract_chapters(slug: str, config: CourseConfig, existing_course: dict) -> 
     )
 
     chapters: list[dict] = []
+    seen_slugs: set[str] = set()
     legacy_course = load_legacy_course(slug)
     for index, nb_path in enumerate(notebooks):
         console.print(f"  [dim]→[/dim] {nb_path.relative_to(course_dir)}")
@@ -956,6 +957,14 @@ def extract_chapters(slug: str, config: CourseConfig, existing_course: dict) -> 
             existing_course=existing_course,
             legacy_course=legacy_course,
         )
+        if chapter["slug"] in seen_slugs:
+            console.print(
+                f"  [yellow]↳ tekrar eden bölüm atlandı:[/yellow] "
+                f"{chapter['slug']} ({nb_path.relative_to(course_dir)})"
+            )
+            continue
+        seen_slugs.add(chapter["slug"])
+        chapter["order_index"] = len(chapters) + 1
         chapters.append(chapter)
     return chapters
 
