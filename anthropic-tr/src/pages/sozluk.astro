@@ -1,0 +1,172 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../components/layout/BaseLayout.astro';
+import glossaryData from '../content/glossary.json';
+
+const categoryLabels: Record<string, string> = {
+  'genel-ai': 'Genel AI',
+  nlp: 'NLP',
+  prompt: 'Prompt',
+  mimari: 'Mimari',
+  api: 'API',
+};
+
+const terms = [...glossaryData].sort((a, b) => a.term_en.localeCompare(b.term_en, 'en'));
+const grouped = terms.reduce<Record<string, typeof terms>>((acc, term) => {
+  const letter = term.term_en[0].toUpperCase();
+  if (!acc[letter]) acc[letter] = [];
+  acc[letter].push(term);
+  return acc;
+}, {});
+
+const categoryCounts = terms.reduce<Record<string, number>>((acc, term) => {
+  acc[term.category] = (acc[term.category] ?? 0) + 1;
+  return acc;
+}, {});
+---
+
+<BaseLayout
+  title="AI ve Claude Sözlüğü"
+  description="LLM, prompt mühendisliği, API ve model mimarisi terimlerini Türkçe açıklayan kapsamlı Anthropic TR sözlüğü."
+>
+  <div class="max-w-6xl mx-auto px-4 py-12">
+    <div class="mb-10 max-w-3xl">
+      <span class="text-xs text-accent uppercase tracking-widest font-medium">Referans</span>
+      <h1 class="text-3xl md:text-4xl font-light mt-3 mb-3">AI ve Claude Sözlüğü</h1>
+      <p class="text-muted leading-relaxed">
+        Claude, Anthropic API ve modern yapay zeka sistemlerinde sık geçen temel kavramları kısa, net ve Türkçe açıklamalarla topladık.
+      </p>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-[280px,1fr]">
+      <aside class="space-y-6">
+        <div class="bg-surface border border-border rounded-2xl p-4">
+          <label for="glossary-search" class="text-xs text-muted uppercase tracking-widest block mb-3">Arama</label>
+          <input
+            id="glossary-search"
+            type="text"
+            placeholder="Terim ara..."
+            class="w-full bg-surface2 border border-border rounded-lg px-4 py-3 text-sm outline-none focus:border-accent transition-colors"
+          />
+        </div>
+
+        <div class="bg-surface border border-border rounded-2xl p-4">
+          <p class="text-xs text-muted uppercase tracking-widest mb-3">Kategori</p>
+          <div class="flex flex-wrap gap-2">
+            <button data-category-filter="all" class="glossary-filter text-xs bg-accent text-white rounded-full px-3 py-1.5 border border-accent">Tümü</button>
+            {Object.entries(categoryLabels).map(([key, label]) => (
+              <button
+                data-category-filter={key}
+                class="glossary-filter text-xs bg-surface2 text-muted rounded-full px-3 py-1.5 border border-border hover:border-accent transition-colors"
+              >
+                {label} <span class="opacity-60">({categoryCounts[key] ?? 0})</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="bg-surface border border-border rounded-2xl p-4">
+          <p class="text-xs text-muted uppercase tracking-widest mb-3">Harfler</p>
+          <div class="flex flex-wrap gap-2">
+            {Object.keys(grouped).map((letter) => (
+              <a href={`#letter-${letter}`} class="text-xs bg-surface2 border border-border rounded-full px-3 py-1.5 text-muted hover:border-accent no-underline transition-colors">
+                {letter}
+              </a>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      <div id="glossary-groups" class="space-y-10">
+        {Object.entries(grouped).map(([letter, items]) => (
+          <section id={`letter-${letter}`} data-letter-section class="space-y-4">
+            <div class="flex items-center gap-4">
+              <h2 class="text-2xl font-light">{letter}</h2>
+              <div class="h-px flex-1 bg-border" />
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2">
+              {items.map((item) => (
+                <article
+                  class="glossary-item bg-surface border border-border rounded-2xl p-5 hover:border-accent transition-colors"
+                  data-category={item.category}
+                  data-search={`${item.term_en} ${item.term_tr} ${item.definition_tr} ${item.related_terms.join(' ')}`.toLowerCase()}
+                >
+                  <div class="flex items-start justify-between gap-3 mb-3">
+                    <div>
+                      <h3 class="text-lg font-medium leading-tight">{item.term_en}</h3>
+                      <p class="text-sm text-accent-light mt-1">{item.term_tr}</p>
+                    </div>
+                    <span class="text-[11px] uppercase tracking-widest text-muted border border-border rounded-full px-2.5 py-1">
+                      {categoryLabels[item.category] ?? item.category}
+                    </span>
+                  </div>
+
+                  <p class="text-sm text-muted leading-relaxed">{item.definition_tr}</p>
+
+                  {item.related_terms.length > 0 && (
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      {item.related_terms.map((related) => (
+                        <span class="text-[11px] bg-surface2 border border-border rounded-full px-2.5 py-1 text-muted">
+                          {related}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const searchInput = document.getElementById('glossary-search') as HTMLInputElement | null;
+  const filterButtons = document.querySelectorAll<HTMLButtonElement>('.glossary-filter');
+  const glossaryItems = document.querySelectorAll<HTMLElement>('.glossary-item');
+  const letterSections = document.querySelectorAll<HTMLElement>('[data-letter-section]');
+  let activeCategory = 'all';
+
+  function syncFilterButtons() {
+    filterButtons.forEach((button) => {
+      const isActive = button.dataset.categoryFilter === activeCategory;
+      button.classList.toggle('bg-accent', isActive);
+      button.classList.toggle('border-accent', isActive);
+      button.classList.toggle('text-white', isActive);
+      button.classList.toggle('bg-surface2', !isActive);
+      button.classList.toggle('border-border', !isActive);
+      button.classList.toggle('text-muted', !isActive);
+    });
+  }
+
+  function applyGlossaryFilters() {
+    const query = searchInput?.value.trim().toLowerCase() ?? '';
+
+    glossaryItems.forEach((item) => {
+      const matchesQuery = !query || (item.dataset.search ?? '').includes(query);
+      const matchesCategory = activeCategory === 'all' || item.dataset.category === activeCategory;
+      item.style.display = matchesQuery && matchesCategory ? '' : 'none';
+    });
+
+    letterSections.forEach((section) => {
+      const visibleItems = Array.from(section.querySelectorAll<HTMLElement>('.glossary-item')).some((item) => item.style.display !== 'none');
+      section.style.display = visibleItems ? '' : 'none';
+    });
+  }
+
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      activeCategory = button.dataset.categoryFilter ?? 'all';
+      syncFilterButtons();
+      applyGlossaryFilters();
+    });
+  });
+
+  searchInput?.addEventListener('input', applyGlossaryFilters);
+  syncFilterButtons();
+  applyGlossaryFilters();
+</script>

@@ -1,22 +1,10 @@
 ---
-export const prerender = false;
+export const prerender = true;
 
 import BaseLayout from '../components/layout/BaseLayout.astro';
-import Card from '../components/ui/Card.astro';
 import AdBanner from '../components/ads/AdBanner.astro';
-import { supabase } from '../lib/supabase';
 import faqsData from '../content/faqs.json';
 import { getAllCourses, getCourseLandingHref } from '../lib/courseData';
-import { getPostDisplayDate, sortPostsByRecency, type PostListItem } from '../lib/posts';
-
-// Son 3 blog yazısını çek
-const { data: postRows } = await supabase
-  .from('posts')
-  .select('title, slug, excerpt, cover_image, tags, published_at, created_at')
-  .eq('status', 'published')
-  .limit(12);
-
-const posts = sortPostsByRecency((postRows ?? []) as PostListItem[]).slice(0, 3);
 
 // SSS önizleme — JSON dosyasından
 const faqs = faqsData.slice(0, 5);
@@ -99,26 +87,13 @@ const learningPath = [
   </section>
 
   <!-- SON BLOG YAZILARI -->
-  {posts && posts.length > 0 && (
-    <section class="max-w-6xl mx-auto px-4 py-12 border-t border-border">
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl font-light">Son Yazılar</h2>
-        <a href="/blog" class="text-sm text-accent no-underline hover:underline">Tümünü gör →</a>
-      </div>
-      <div class="grid md:grid-cols-3 gap-5">
-        {posts.map(post => (
-          <Card
-            title={post.title}
-            href={`/blog/${post.slug}`}
-            description={post.excerpt ?? undefined}
-            tags={post.tags}
-            image={post.cover_image ?? undefined}
-            date={getPostDisplayDate(post)}
-          />
-        ))}
-      </div>
-    </section>
-  )}
+  <section id="recent-posts-section" class="hidden max-w-6xl mx-auto px-4 py-12 border-t border-border">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-2xl font-light">Son Yazılar</h2>
+      <a href="/blog" class="text-sm text-accent no-underline hover:underline">Tümünü gör →</a>
+    </div>
+    <div id="recent-posts-grid" class="grid md:grid-cols-3 gap-5"></div>
+  </section>
 
   <!-- AdSense: İçerik ortası -->
   <div class="max-w-6xl mx-auto px-4 py-8">
@@ -148,3 +123,70 @@ const learningPath = [
     </section>
   )}
 </BaseLayout>
+
+<script>
+  const recentPostsSection = document.getElementById('recent-posts-section');
+  const recentPostsGrid = document.getElementById('recent-posts-grid');
+
+  function escapeHtml(value: string) {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function formatDate(value: string) {
+    try {
+      return new Date(value).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+    } catch {
+      return '';
+    }
+  }
+
+  function renderCard(post: {
+    title: string;
+    slug: string;
+    excerpt?: string | null;
+    cover_image?: string | null;
+    tags?: string[] | null;
+    published_at?: string | null;
+    created_at?: string | null;
+  }) {
+    const image = post.cover_image
+      ? `<div class="aspect-video overflow-hidden"><img src="${escapeHtml(post.cover_image)}" alt="${escapeHtml(post.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" /></div>`
+      : '';
+    const tags = (post.tags ?? [])
+      .map((tag) => `<span class="text-xs bg-surface2 border border-border text-muted px-2 py-0.5 rounded-full">${escapeHtml(tag)}</span>`)
+      .join('');
+    const tagMarkup = tags ? `<div class="flex flex-wrap gap-1 mb-3">${tags}</div>` : '';
+    const description = post.excerpt ? `<p class="text-sm text-muted line-clamp-2">${escapeHtml(post.excerpt)}</p>` : '';
+    const date = post.published_at || post.created_at;
+    const dateMarkup = date ? `<p class="text-xs text-muted mt-3">${formatDate(date)}</p>` : '';
+
+    return `
+      <a href="/blog/${encodeURIComponent(post.slug)}" class="group block bg-surface border border-border rounded-xl overflow-hidden hover:border-accent transition-colors no-underline">
+        ${image}
+        <div class="p-5">
+          ${tagMarkup}
+          <h3 class="font-medium text-base group-hover:text-accent-light transition-colors mb-2">${escapeHtml(post.title)}</h3>
+          ${description}
+          ${dateMarkup}
+        </div>
+      </a>
+    `;
+  }
+
+  fetch('/api/recent-posts')
+    .then((response) => (response.ok ? response.json() : { posts: [] }))
+    .then((payload) => {
+      const posts = Array.isArray(payload?.posts) ? payload.posts : [];
+      if (!posts.length || !recentPostsSection || !recentPostsGrid) return;
+      recentPostsGrid.innerHTML = posts.map(renderCard).join('');
+      recentPostsSection.classList.remove('hidden');
+    })
+    .catch(() => {
+      // graceful degradation
+    });
+</script>

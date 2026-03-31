@@ -25,14 +25,33 @@ const {
 const siteUrl = 'https://anthropic-tr.com';
 const canonicalURL = canonical ?? new URL(Astro.url.pathname, siteUrl).href;
 const adSenseId = import.meta.env.ADSENSE_CLIENT_ID;
+const analyticsUrl = import.meta.env.ANALYTICS_URL;
+const analyticsSiteId = import.meta.env.ANALYTICS_SITE_ID;
+const analyticsProvider = analyticsUrl?.toLowerCase().includes('plausible') ? 'plausible' : 'umami';
 ---
 
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script is:inline>
+    (() => {
+      try {
+        const stored = window.localStorage.getItem('theme');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        const theme = stored === 'light' || stored === 'dark' ? stored : systemTheme;
+        const root = document.documentElement;
+        root.classList.remove('light', 'dark');
+        root.classList.add(theme);
+        root.style.colorScheme = theme;
+      } catch {
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.colorScheme = 'dark';
+      }
+    })();
+  </script>
 
   <SEO
     title={`${title} | Anthropic TR`}
@@ -63,6 +82,14 @@ const adSenseId = import.meta.env.ADSENSE_CLIENT_ID;
       crossorigin="anonymous"
     />
   )}
+
+  {analyticsUrl && analyticsSiteId && analyticsProvider === 'plausible' && (
+    <script defer data-domain={analyticsSiteId} src={analyticsUrl} />
+  )}
+
+  {analyticsUrl && analyticsSiteId && analyticsProvider === 'umami' && (
+    <script defer data-website-id={analyticsSiteId} src={analyticsUrl} />
+  )}
 </head>
 <body>
   <Header />
@@ -70,5 +97,67 @@ const adSenseId = import.meta.env.ADSENSE_CLIENT_ID;
     <slot />
   </main>
   <Footer />
+  <script define:vars={{ analyticsProviderValue: analyticsProvider ?? '' }}>
+    const analyticsProvider = analyticsProviderValue;
+
+    (window as any).trackEvent = (name: string, data: Record<string, string | number | boolean> = {}) => {
+      try {
+        if (analyticsProvider === 'plausible' && typeof (window as any).plausible === 'function') {
+          (window as any).plausible(name, Object.keys(data).length ? { props: data } : undefined);
+          return;
+        }
+
+        if (typeof (window as any).umami?.track === 'function') {
+          (window as any).umami.track(name, data);
+        }
+      } catch {
+        // no-op
+      }
+    };
+
+    const copyTimers = new WeakMap<HTMLButtonElement, number>();
+
+    document.addEventListener('click', async (event) => {
+      const target = event.target as HTMLElement | null;
+      const button = target?.closest<HTMLButtonElement>('.copy-btn');
+      if (!button) return;
+
+      const directValue = button.dataset.copy;
+      const targetSelector = button.dataset.copyTarget;
+      const sourceElement = targetSelector ? document.querySelector<HTMLElement>(targetSelector) : null;
+      const textToCopy = directValue
+        ?? (sourceElement instanceof HTMLTextAreaElement || sourceElement instanceof HTMLInputElement
+          ? sourceElement.value
+          : sourceElement?.textContent?.trim()
+        );
+
+      if (!textToCopy) return;
+
+      event.preventDefault();
+
+      const defaultLabel = button.dataset.defaultLabel || button.textContent?.trim() || 'Kopyala';
+      const successLabel = button.dataset.successLabel || 'Kopyalandı';
+      const failureLabel = button.dataset.failureLabel || 'Kopyalanamadı';
+
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        button.textContent = successLabel;
+        (window as any).trackEvent?.('code_copy', { kind: button.dataset.copyType || 'generic' });
+      } catch {
+        button.textContent = failureLabel;
+      }
+
+      button.disabled = true;
+      const previousTimer = copyTimers.get(button);
+      if (previousTimer) window.clearTimeout(previousTimer);
+
+      const nextTimer = window.setTimeout(() => {
+        button.textContent = defaultLabel;
+        button.disabled = false;
+      }, 1600);
+
+      copyTimers.set(button, nextTimer);
+    });
+  </script>
 </body>
 </html>

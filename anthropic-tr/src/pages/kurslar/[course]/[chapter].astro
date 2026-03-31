@@ -5,6 +5,8 @@ import BaseLayout from '../../../components/layout/BaseLayout.astro';
 import AdBanner from '../../../components/ads/AdBanner.astro';
 import { getAllCourses, getChapterDescription, getCourseChapterHref } from '../../../lib/courseData';
 import type { Chapter } from '../../../lib/types';
+import { highlightCode } from '../../../lib/shiki';
+import { calculateReadingTime } from '../../../lib/readingTime';
 
 export async function getStaticPaths() {
   const courses = getAllCourses();
@@ -30,6 +32,32 @@ const nextChapter = activeIndex < chapters.length - 1 ? chapters[activeIndex + 1
 const pagePath = getCourseChapterHref(course.slug, chapter.slug);
 const canonical = `https://anthropic-tr.com${pagePath}`;
 const description = getChapterDescription(chapter, course.description_tr ?? course.title_tr);
+const readingTime = calculateReadingTime(chapter.blocks_tr ?? chapter.blocks_en ?? []);
+const likeId = `chapter:${course.slug}/${chapter.slug}`;
+
+const renderedBlocksTr = await Promise.all(
+  (chapter.blocks_tr ?? []).map(async (block, index) =>
+    block.type === 'code'
+      ? {
+          ...block,
+          copyId: `course-code-tr-${index}`,
+          highlightedHtml: await highlightCode(block.content, block.language),
+        }
+      : block
+  )
+);
+
+const renderedBlocksEn = await Promise.all(
+  (chapter.blocks_en ?? []).map(async (block, index) =>
+    block.type === 'code'
+      ? {
+          ...block,
+          copyId: `course-code-en-${index}`,
+          highlightedHtml: await highlightCode(block.content, block.language),
+        }
+      : block
+  )
+);
 
 const schema = {
   "@context": "https://schema.org",
@@ -147,6 +175,18 @@ const schema = {
               <h1 class="text-2xl md:text-3xl font-light mt-2">{chapter.title_tr}</h1>
               {description && <p class="text-sm text-muted mt-3 max-w-xl">{description}</p>}
               <div class="flex flex-wrap gap-2 mt-4 text-xs">
+                <span class="border border-border rounded-lg px-3 py-1.5 text-muted bg-surface2/60">
+                  {readingTime} dk okuma
+                </span>
+                <button
+                  id="chapter-like-btn"
+                  type="button"
+                  data-like-id={likeId}
+                  class="border border-border rounded-lg px-3 py-1.5 text-muted hover:border-accent transition-colors bg-transparent flex items-center gap-2"
+                >
+                  <span data-like-icon>♡</span>
+                  <span data-like-label>Beğen</span>
+                </button>
                 {chapter.source_url && (
                   <a
                     href={chapter.source_url}
@@ -189,18 +229,50 @@ const schema = {
 
         <article>
           <div class="lang-tr space-y-4">
-            {(chapter.blocks_tr ?? []).map((block) =>
+            {renderedBlocksTr.map((block) =>
               block.type === 'html'
                 ? <div class="prose-content leading-relaxed" set:html={block.content} />
-                : <pre class="my-4 overflow-x-auto text-sm"><code class={`language-${block.language ?? 'text'}`}>{block.content}</code></pre>
+                : (
+                  <div class="relative group my-5">
+                    <textarea id={block.copyId} class="sr-only hidden" readonly aria-hidden="true">{block.content}</textarea>
+                    <button
+                      type="button"
+                      class="copy-btn absolute right-3 top-3 z-10 text-[11px] border border-border/80 rounded-md px-2.5 py-1 text-muted hover:border-accent transition-colors bg-surface/85"
+                      data-copy-target={`#${block.copyId}`}
+                      data-default-label="Kopyala"
+                      data-success-label="Kopyalandı"
+                      data-failure-label="Hata"
+                      data-copy-type="course_code"
+                    >
+                      Kopyala
+                    </button>
+                    <div set:html={block.highlightedHtml ?? ''} />
+                  </div>
+                )
             )}
           </div>
 
           <div class="lang-en hidden space-y-4">
-            {(chapter.blocks_en ?? []).map((block) =>
+            {renderedBlocksEn.map((block) =>
               block.type === 'html'
                 ? <div class="prose-content leading-relaxed" set:html={block.content} />
-                : <pre class="my-4 overflow-x-auto text-sm"><code class={`language-${block.language ?? 'text'}`}>{block.content}</code></pre>
+                : (
+                  <div class="relative group my-5">
+                    <textarea id={block.copyId} class="sr-only hidden" readonly aria-hidden="true">{block.content}</textarea>
+                    <button
+                      type="button"
+                      class="copy-btn absolute right-3 top-3 z-10 text-[11px] border border-border/80 rounded-md px-2.5 py-1 text-muted hover:border-accent transition-colors bg-surface/85"
+                      data-copy-target={`#${block.copyId}`}
+                      data-default-label="Kopyala"
+                      data-success-label="Kopyalandı"
+                      data-failure-label="Hata"
+                      data-copy-type="course_code"
+                    >
+                      Kopyala
+                    </button>
+                    <div set:html={block.highlightedHtml ?? ''} />
+                  </div>
+                )
             )}
           </div>
         </article>
@@ -266,11 +338,11 @@ const schema = {
   .prose-content :global(img) { width: 100%; border-radius: 0.85rem; border: 1px solid var(--color-border); margin: 1.25rem 0; background: var(--color-surface); }
   .prose-content :global(details) { border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 0.85rem 1rem; background: color-mix(in srgb, var(--color-surface2) 55%, transparent); margin: 1rem 0; }
   .prose-content :global(summary) { cursor: pointer; font-weight: 500; }
-  pre { background: var(--color-surface2); border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1rem; font-family: var(--font-mono); line-height: 1.6; }
 </style>
 
-<script>
+<script define:vars={{ courseSlug: course.slug, chapterSlugValue: chapter.slug }}>
   const LANG_KEY = 'course-lang';
+  const LIKE_KEY = 'likes';
 
   function getLang(): 'tr' | 'en' {
     return (localStorage.getItem(LANG_KEY) as 'tr' | 'en') ?? 'tr';
@@ -289,8 +361,14 @@ const schema = {
   }
 
   applyLang(getLang());
-  document.getElementById('lang-tr')?.addEventListener('click', () => applyLang('tr'));
-  document.getElementById('lang-en')?.addEventListener('click', () => applyLang('en'));
+  document.getElementById('lang-tr')?.addEventListener('click', () => {
+    applyLang('tr');
+    (window as any).trackEvent?.('lang_toggle', { lang: 'tr', course: courseSlug, chapter: chapterSlugValue });
+  });
+  document.getElementById('lang-en')?.addEventListener('click', () => {
+    applyLang('en');
+    (window as any).trackEvent?.('lang_toggle', { lang: 'en', course: courseSlug, chapter: chapterSlugValue });
+  });
 
   function getProgress(courseId: string): Set<string> {
     try {
@@ -303,6 +381,27 @@ const schema = {
 
   function saveProgress(courseId: string, done: Set<string>) {
     localStorage.setItem(`progress-${courseId}`, JSON.stringify([...done]));
+  }
+
+  function getLikes() {
+    try {
+      return new Set<string>(JSON.parse(localStorage.getItem(LIKE_KEY) ?? '[]'));
+    } catch {
+      return new Set<string>();
+    }
+  }
+
+  function saveLikes(likes: Set<string>) {
+    localStorage.setItem(LIKE_KEY, JSON.stringify([...likes]));
+  }
+
+  function syncLikeButton(button: HTMLButtonElement, liked: boolean) {
+    const icon = button.querySelector<HTMLElement>('[data-like-icon]');
+    const label = button.querySelector<HTMLElement>('[data-like-label]');
+    if (icon) icon.textContent = liked ? '♥' : '♡';
+    if (label) label.textContent = liked ? 'Beğenildi' : 'Beğen';
+    button.classList.toggle('text-accent-light', liked);
+    button.classList.toggle('border-accent', liked);
   }
 
   function updateUI(courseId: string, total: number) {
@@ -331,6 +430,7 @@ const schema = {
     }
     button.addEventListener('click', () => {
       const current = getProgress(courseId);
+      const willComplete = !current.has(chapterSlug);
       if (current.has(chapterSlug)) {
         current.delete(chapterSlug);
         button.textContent = 'Tamamla ✓';
@@ -342,6 +442,27 @@ const schema = {
       }
       saveProgress(courseId, current);
       updateUI(courseId, total);
+      (window as any).trackEvent?.('chapter_complete', {
+        course: courseSlug,
+        chapter: chapterSlug,
+        completed: willComplete,
+      });
+    });
+  }
+
+  const likeButton = document.getElementById('chapter-like-btn') as HTMLButtonElement | null;
+  if (likeButton) {
+    const id = likeButton.dataset.likeId ?? '';
+    const likes = getLikes();
+    syncLikeButton(likeButton, likes.has(id));
+    likeButton.addEventListener('click', () => {
+      const currentLikes = getLikes();
+      const nextLiked = !currentLikes.has(id);
+      if (nextLiked) currentLikes.add(id);
+      else currentLikes.delete(id);
+      saveLikes(currentLikes);
+      syncLikeButton(likeButton, nextLiked);
+      (window as any).trackEvent?.('like', { slug: id, liked: nextLiked, surface: 'chapter' });
     });
   }
 </script>

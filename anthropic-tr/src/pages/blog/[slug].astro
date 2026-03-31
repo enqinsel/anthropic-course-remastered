@@ -6,6 +6,8 @@ import AdBanner from '../../components/ads/AdBanner.astro';
 import { supabase } from '../../lib/supabase';
 import type { ContentBlock } from '../../lib/types';
 import { getPostDisplayDate } from '../../lib/posts';
+import { highlightCode } from '../../lib/shiki';
+import { calculateContentReadingTime } from '../../lib/readingTime';
 
 const { slug } = Astro.params;
 
@@ -42,12 +44,18 @@ function normalizeBlocks(content: ContentBlock[]) {
 
 const blocks = normalizeBlocks(post.content as ContentBlock[]);
 const publishedDate = getPostDisplayDate(post);
-
-// Okuma süresi
-const wordCount = blocks
-  .filter(b => b.type === 'paragraph' || b.type === 'heading')
-  .reduce((sum, b) => sum + (b.text ?? '').split(' ').length, 0);
-const readingTime = Math.max(1, Math.round(wordCount / 200));
+const renderedBlocks = await Promise.all(
+  blocks.map(async (block, index) =>
+    block.type === 'code'
+      ? {
+          ...block,
+          copyId: `blog-code-${index}`,
+          highlightedHtml: await highlightCode(block.code ?? '', block.language),
+        }
+      : block
+  )
+);
+const readingTime = calculateContentReadingTime(blocks);
 
 // İçindekiler
 const headings = blocks
@@ -86,6 +94,7 @@ const schema = {
 };
 
 const postUrl = `https://anthropic-tr.com/blog/${post.slug}`;
+const likeId = `blog:${post.slug}`;
 ---
 
 <BaseLayout
@@ -126,7 +135,7 @@ const postUrl = `https://anthropic-tr.com/blog/${post.slug}`;
             <span>·</span>
             <span>{readingTime} dk okuma</span>
           </div>
-          <div class="flex gap-3 mt-4">
+          <div class="flex flex-wrap gap-3 mt-4">
             <a
               href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(postUrl)}`}
               target="_blank"
@@ -136,20 +145,31 @@ const postUrl = `https://anthropic-tr.com/blog/${post.slug}`;
               Twitter/X'te Paylaş
             </a>
             <button
-              id="copy-link-btn"
+              class="copy-btn text-xs border border-border rounded-lg px-3 py-1.5 text-muted hover:border-accent transition-colors bg-transparent"
               type="button"
-              data-url={postUrl}
+              data-copy={postUrl}
               data-default-label="Linki Kopyala"
-              class="text-xs border border-border rounded-lg px-3 py-1.5 text-muted hover:border-accent transition-colors cursor-pointer bg-transparent"
+              data-success-label="Kopyalandı"
+              data-failure-label="Kopyalanamadı"
+              data-copy-type="blog_link"
             >
               Linki Kopyala
+            </button>
+            <button
+              id="post-like-btn"
+              type="button"
+              data-like-id={likeId}
+              class="text-xs border border-border rounded-lg px-3 py-1.5 text-muted hover:border-accent transition-colors bg-transparent flex items-center gap-2"
+            >
+              <span data-like-icon>♡</span>
+              <span data-like-label>Beğen</span>
             </button>
           </div>
         </div>
 
         <!-- İçerik blokları -->
         <div class="space-y-5">
-          {blocks.map(block => {
+          {renderedBlocks.map(block => {
             if (block.type === 'paragraph') return (
               <p class="leading-[1.8]">{block.text}</p>
             );
@@ -166,7 +186,21 @@ const postUrl = `https://anthropic-tr.com/blog/${post.slug}`;
               </figure>
             );
             if (block.type === 'code') return (
-              <pre class="my-4"><code class={`language-${block.language ?? 'text'}`}>{block.code}</code></pre>
+              <div class="relative group my-5">
+                <textarea id={block.copyId} class="sr-only hidden" readonly aria-hidden="true">{block.code}</textarea>
+                <button
+                  type="button"
+                  class="copy-btn absolute right-3 top-3 z-10 text-[11px] border border-border/80 rounded-md px-2.5 py-1 text-muted hover:border-accent transition-colors bg-surface/85"
+                  data-copy-target={`#${block.copyId}`}
+                  data-default-label="Kopyala"
+                  data-success-label="Kopyalandı"
+                  data-failure-label="Hata"
+                  data-copy-type="blog_code"
+                >
+                  Kopyala
+                </button>
+                <div set:html={block.highlightedHtml ?? ''} />
+              </div>
             );
             if (block.type === 'callout') {
               const colors = {
@@ -251,28 +285,45 @@ const postUrl = `https://anthropic-tr.com/blog/${post.slug}`;
       </aside>
     </div>
   </div>
-
   <script>
-    const copyLinkButton = document.getElementById('copy-link-btn');
-    let copyResetTimer: number | undefined;
+    const LIKE_KEY = 'likes';
+    const postLikeButton = document.getElementById('post-like-btn') as HTMLButtonElement | null;
 
-    copyLinkButton?.addEventListener('click', async () => {
-      const button = copyLinkButton as HTMLButtonElement;
-      const defaultLabel = button.dataset.defaultLabel || 'Linki Kopyala';
-
+    function getLikes() {
       try {
-        await navigator.clipboard.writeText(button.dataset.url || window.location.href);
-        button.textContent = 'Kopyalandı';
+        return new Set<string>(JSON.parse(localStorage.getItem(LIKE_KEY) ?? '[]'));
       } catch {
-        button.textContent = 'Kopyalanamadı';
+        return new Set<string>();
       }
+    }
 
-      button.disabled = true;
-      window.clearTimeout(copyResetTimer);
-      copyResetTimer = window.setTimeout(() => {
-        button.textContent = defaultLabel;
-        button.disabled = false;
-      }, 1600);
-    });
+    function saveLikes(likes: Set<string>) {
+      localStorage.setItem(LIKE_KEY, JSON.stringify([...likes]));
+    }
+
+    function syncLikeButton(button: HTMLButtonElement, liked: boolean) {
+      const icon = button.querySelector<HTMLElement>('[data-like-icon]');
+      const label = button.querySelector<HTMLElement>('[data-like-label]');
+      if (icon) icon.textContent = liked ? '♥' : '♡';
+      if (label) label.textContent = liked ? 'Beğenildi' : 'Beğen';
+      button.classList.toggle('text-accent-light', liked);
+      button.classList.toggle('border-accent', liked);
+    }
+
+    if (postLikeButton) {
+      const id = postLikeButton.dataset.likeId ?? '';
+      const likes = getLikes();
+      syncLikeButton(postLikeButton, likes.has(id));
+
+      postLikeButton.addEventListener('click', () => {
+        const currentLikes = getLikes();
+        const nextLiked = !currentLikes.has(id);
+        if (nextLiked) currentLikes.add(id);
+        else currentLikes.delete(id);
+        saveLikes(currentLikes);
+        syncLikeButton(postLikeButton, nextLiked);
+        (window as any).trackEvent?.('like', { slug: id, liked: nextLiked, surface: 'blog' });
+      });
+    }
   </script>
 </BaseLayout>

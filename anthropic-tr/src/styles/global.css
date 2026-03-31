@@ -22,12 +22,31 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  html.light {
+    --color-site: #f8f8f6;
+    --color-surface: #ffffff;
+    --color-surface2: #f0efe8;
+    --color-border: #d8d8d0;
+    --color-accent: #c96442;
+    --color-accent-light: #b8522f;
+    --color-base: #1a1a1a;
+    --color-muted: #6b6b65;
+    --color-success: #2f8d5d;
+    --color-info: #3368b6;
+    --color-warn: #9d7d19;
+    color-scheme: light;
   }
 
   body {
-    background-color: #0f0f13;
-    color: #e8e6df;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 28%),
+      linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 28%, var(--color-site)) 0%, var(--color-site) 100%);
+    color: var(--color-base);
+    font-family: var(--font-sans);
+    transition: background-color 220ms ease, color 220ms ease;
   }
 
   h1 {
@@ -53,29 +72,72 @@
   }
 
   code:not(pre code) {
-    background-color: #22222c;
-    color: #e88060;
-    border: 1px solid #2e2e3a;
+    background-color: var(--color-surface2);
+    color: var(--color-accent-light);
+    border: 1px solid var(--color-border);
     padding: 0.125rem 0.25rem;
     border-radius: 0.25rem;
     font-size: 0.875rem;
-    font-family: "Fira Code", "Cascadia Code", monospace;
+    font-family: var(--font-mono);
   }
 
   pre {
-    background-color: #22222c;
-    border: 1px solid #2e2e3a;
+    background-color: var(--color-surface2);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     padding: 1rem;
     overflow-x: auto;
     font-size: 0.875rem;
+    font-family: var(--font-mono);
   }
 
   a {
-    color: #e88060;
+    color: var(--color-accent-light);
   }
 
   a:hover {
     text-decoration: underline;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  pre.shiki {
+    background-color: var(--shiki-dark-bg, var(--color-surface2));
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+    padding: 1.1rem 1rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-base) 4%, transparent);
+  }
+
+  pre.shiki code {
+    display: grid;
+    gap: 0.1rem;
+    font-family: var(--font-mono);
+    background: transparent;
+  }
+
+  pre.shiki .line {
+    min-height: 1.4em;
+  }
+
+  html.dark .shiki,
+  html.dark .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+
+  html.light .shiki,
+  html.light .shiki span {
+    color: var(--shiki-light) !important;
+    background-color: var(--shiki-light-bg) !important;
+  }
+
+  .copy-btn {
+    backdrop-filter: blur(10px);
   }
 }

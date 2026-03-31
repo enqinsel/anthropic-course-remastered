@@ -26,6 +26,8 @@ export default defineConfig({
           item.priority = 0.9;
         } else if (item.url.includes('/blog/')) {
           item.priority = 0.8;
+        } else if (item.url.includes('/sozluk')) {
+          item.priority = 0.75;
         } else if (item.url.includes('/sss')) {
           item.priority = 0.7;
         }
